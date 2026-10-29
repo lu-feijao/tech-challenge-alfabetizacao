@@ -1,4 +1,4 @@
--- Silver · tabelas de de-para (decisões D1 e D4 de docs/frente3/mapa_joins.md)
+-- Silver · tabelas de de-para (decisões D1 e D4 de docs/dados/mapa_joins.md)
 -- Marcadores {projeto}, {silver} etc. são preenchidos pelo silver_transformacao.py a partir do .env.
 
 -- D4: código IBGE da UF (2 primeiros dígitos do id_municipio) -> sigla

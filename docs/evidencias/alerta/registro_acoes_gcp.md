@@ -2,6 +2,8 @@
 
 Cada ação da Frente 4 no projeto `project-ce782257-1c9c-4b6f-87a` ganha uma linha aqui, com data, o que foi feito e se houve escrita.
 
+**Nota (29/10):** os testes de 26/10 e 28/10 usaram scripts da Frente 4 executados no Cloud Shell (`ops/testar_alerta.py` e a primeira versão do logger), que não foram para o repositório. O registro de métricas que o pipeline usa é [`ops/run_logger.py`](../../../ops/run_logger.py), ligado à Silver e à Gold em 29/10; a tabela, a política de alerta e o canal de e-mail são os mesmos.
+
 | Data/hora (BRT) | Etapa | Ação | Escreveu no GCP? | Objetos afetados |
 |---|---|---|---|---|
 | 22/10/2026 23:30 | Medição | Leitura da aba Detalhes de 21 tabelas e 4 dry runs no editor (nenhuma consulta executada) | Não | — |

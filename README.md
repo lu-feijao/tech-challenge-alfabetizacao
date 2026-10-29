@@ -31,7 +31,7 @@ Este projeto constrói, em nuvem, um pipeline que integra as tabelas do Indicado
             (rejeitados: ops_tc.eventos_rejeitados)                 (coluna origem: oficial | simulado)
  Qualidade (ops_tc.dq_results)  implementado (seção 3.4)
  Alerta de falha .............. implementado e testado (seção 7): log tc-pipeline (ERROR) → Cloud Monitoring → e-mail
- Métricas de execução ......... tabela ops_tc.pipeline_runs criada e testada; Silver e Gold ainda não gravam nela (seção 7)
+ Métricas de execução ......... implementado (seção 7): Silver e Gold gravam cada etapa em ops_tc.pipeline_runs (ops/run_logger.py)
  Orçamento .................... implementado (seção 7): Cloud Billing, R$ 50/mês, alertas por e-mail
 ```
 
@@ -46,8 +46,8 @@ Todas as camadas são datasets dentro do mesmo projeto do Google Cloud, e cada c
 | `gold/` | Indicadores prontos para análise (`gold_transformacao.py` e os SQL em `gold/sql/`) e a cópia da Gold em Parquet para a Fase 3 (`exportar_gold.py` e `gold/export/`) |
 | `quality/` | Regras de qualidade de dados (`regras.py`) e funções de execução e registro em `ops.dq_results` (`dq.py`) |
 | `streaming/` | Streaming: simulador (`producer.py`), consumidor em micro-lotes (`consumer.py`) e a validação dos eventos (`validacao.py`) |
-| `tests/` | Testes unitários da triagem de eventos (`python -m unittest discover -s tests -t .`) |
-| `ops/` | Reservada para o código de observabilidade da frente 4 (logger de `pipeline_runs`, teste do alerta, SQL de custo). Ainda sem código no repositório |
+| `tests/` | Testes unitários da triagem de eventos e do registro de métricas (`python -m unittest discover -s tests -t .`) |
+| `ops/` | Observabilidade e custo: registro de métricas de execução (`run_logger.py`), DDL de `pipeline_runs` e view de custo por etapa (`sql/`), consulta de consumo real (`sql/finops/`) e a política de alerta exportada (`alerta_falha.json`) |
 | `docs/` | Documentação técnica, organizada por tema (detalhe abaixo) |
 
 Dentro de `docs/`:
@@ -281,7 +281,7 @@ Evidências, jobs, contagens e prints: [`docs/evidencias/streaming/`](docs/evide
 
 - Python 3.10 ou superior e o [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) (`gcloud` e `bq`).
 - Um projeto no Google Cloud com o BigQuery ativo. O batch (Bronze, Silver, Gold e qualidade) roda inclusive no sandbox do BigQuery, porque grava só por load job e `CREATE TABLE`. O streaming usa o Pub/Sub, que exige faturamento ativo no projeto.
-- Permissão no projeto para criar datasets e tabelas e rodar jobs no BigQuery (e, para o streaming, publicar e assinar no Pub/Sub).
+- Permissão no projeto para criar datasets e tabelas e rodar jobs no BigQuery (e, para o streaming, publicar e assinar no Pub/Sub). Para que uma falha dispare o alerta por e-mail, quem executa também precisa do papel Gravador de registros (`roles/logging.logWriter`); sem ele, o pipeline roda normalmente e a falha fica registrada só em `pipeline_runs` e no terminal.
 - Custo de referência: cerca de 2,3 GB lidos por execução completa de Silver e Gold (seção 3.2). A ingestão da Bronze não usa consulta SQL.
 
 ### Preparar um projeto novo (só na primeira vez)
@@ -345,7 +345,7 @@ As tabelas são criadas pelos próprios scripts.
    python streaming/producer.py      # terminal 2: 5 válidos, 1 duplicado, 1 inválido
    ```
    O login do Google precisa ter permissão de publicar e assinar no Pub/Sub e de gravar em `bronze_tc` e `ops_tc`.
-8. Testes unitários da triagem de eventos (sem GCP):
+8. Testes unitários da triagem de eventos e do registro de métricas (sem GCP):
    ```bash
    python -m unittest discover -s tests -t .
    ```
@@ -381,7 +381,7 @@ As tabelas são criadas pelos próprios scripts.
 | Python 3 | scripts de ingestão, Silver, Gold, qualidade, exportação e streaming | bibliotecas oficiais do Google (`google-cloud-bigquery`, `google-cloud-pubsub`) |
 | SQL (BigQuery) | transformações da Silver e da Gold, um arquivo por tabela | versionável e legível; o processamento roda no BigQuery, não na máquina de quem executa |
 | pandas e pyarrow | carga da Bronze, gravação de `dq_results` e cópia da Gold em Parquet | |
-| `unittest` | testes da triagem de eventos (`tests/`) | biblioteca padrão, sem dependência extra |
+| `unittest` | testes da triagem de eventos e do registro de métricas (`tests/`) | biblioteca padrão, sem dependência extra |
 
 Versões fixadas em `requirements.txt`.
 
@@ -397,6 +397,7 @@ Versões fixadas em `requirements.txt`.
   - `silver_tc.alunos` é particionada por ano e clusterizada por UF e município: consultas que filtram ano ou município leem menos.
   - A Bronze **não** é particionada: a Silver lê a Bronze inteira a cada execução, e a leitura cresce a cada nova carga (seção 3.2). Aceitável com 2 cargas; com recargas frequentes, particionar por data de ingestão seria o primeiro ajuste.
   - Gravação por load job em vez de inserção por streaming do BigQuery: gratuita e disponível no sandbox, ao custo de alguns segundos de latência por micro-lote (seção 3.5).
+  - Teto de 10 GiB faturados por consulta (`maximum_bytes_billed`, em `ops/run_logger.py`): uma consulta que passe do teto falha em vez de cobrar, e a falha dispara o alerta. A maior consulta do pipeline lê cerca de 1 GB.
 - **Qualidade que bloqueia.** Regras bloqueantes interrompem a Silver e impedem a Gold (seção 3.4). Custa cerca de 1 GB lido por execução nas regras, e evita publicar indicador errado.
 
 ## 7. Monitoramento e FinOps
@@ -409,15 +410,17 @@ Versões fixadas em `requirements.txt`.
 | Alerta de erro | política **"Pipeline TC - falha"** no Cloud Monitoring: qualquer entrada com severidade ERROR no log `tc-pipeline` abre um alerta e envia e-mail ao canal da frente 4. Avisa de novo a cada 5 min enquanto aberto e fecha sozinho em 30 min | [`docs/evidencias/alerta/`](docs/evidencias/alerta/) |
 | Latência medida de fato | streaming: `latencia_segundos` = recebimento − produção, por evento (0,91 a 17,11 s); batch: duração de cada SQL impressa pelos scripts | seção 3.5; `bronze_tc.eventos_alunos` |
 | Volume processado | linhas e bytes de cada tabela no catálogo; bytes processados por SQL na saída dos scripts | [`docs/dados/catalogo/catalogo_dados.md`](docs/dados/catalogo/catalogo_dados.md) |
-| Métricas de execução persistidas (duração por etapa, linhas de entrada e saída, status) | tabela `ops_tc.pipeline_runs` (só acréscimo, particionada por dia, sem expiração) criada e testada com 4 linhas de teste (`etapa = 'teste_frente4'`). **Os scripts da Silver e da Gold ainda não gravam nela**: o logger da frente 4 não está no repositório | `ops_tc.pipeline_runs` |
-| Custo por etapa | view `ops_tc.vw_custo_por_etapa`, que soma os bytes faturados dos jobs por label `pipeline`/`camada`/`etapa`. Hoje só os jobs do catálogo têm label | `ops_tc.vw_custo_por_etapa` |
+| Métricas de execução persistidas (duração por etapa, linhas de entrada e saída, status) | a Silver e a Gold gravam uma linha por etapa (cada SQL, as regras, a gravação dos resultados e o portão) em `ops_tc.pipeline_runs`: início, fim, duração, linhas de entrada e saída, bytes processados e faturados, job IDs, status e erro. Gravação por load job, só acréscimo; a tabela é particionada por dia e não expira. Código em `ops/run_logger.py` | `ops_tc.pipeline_runs` |
+| Custo por etapa | view `ops_tc.vw_custo_por_etapa`, que soma os bytes faturados dos jobs por label `pipeline`/`camada`/`etapa`. Os jobs da Silver e da Gold recebem esses labels em `ops/run_logger.py`; a definição da view está em `ops/sql/vw_custo_por_etapa.sql` | `ops_tc.vw_custo_por_etapa` |
 
-**Teste do alerta (28/10/2026, horário de Brasília):** a falha simulada foi registrada às 20:20:29, o alerta abriu às 20:21:21 (52 s depois) e o e-mail chegou às 20:21, na execução `teste_20261028_232024_f5c54d`. Prints do alerta aberto e do e-mail em [`docs/evidencias/alerta/`](docs/evidencias/alerta/); registro das ações no GCP em [`docs/evidencias/alerta/registro_acoes_gcp.md`](docs/evidencias/alerta/registro_acoes_gcp.md).
+**Teste com o pipeline real (29/10/2026):** `python silver/silver_transformacao.py --simular-falha` reprovou a R04, gravou a etapa `regras_bloqueantes` como falha em `pipeline_runs` às 17:35:40 (horário de Brasília), o alerta abriu às 17:35:55 (**15 s depois**) e o e-mail chegou às 17:35. Em seguida, a Silver normal e a Gold rodaram aprovadas: 10 e 8 etapas registradas, ≈ 62 s e ≈ 23 s, ≈ 2,53 GB faturados no total. Detalhes, etapa por etapa: [`docs/evidencias/alerta/teste_pipeline_2026-10-29.md`](docs/evidencias/alerta/teste_pipeline_2026-10-29.md).
+
+**Primeiro teste do alerta (28/10/2026, horário de Brasília):** com um script de teste da frente 4, a falha simulada foi registrada às 20:20:29, o alerta abriu às 20:21:21 (52 s depois) e o e-mail chegou às 20:21, na execução `teste_20261028_232024_f5c54d`. Prints do alerta aberto e do e-mail em [`docs/evidencias/alerta/`](docs/evidencias/alerta/); registro das ações no GCP em [`docs/evidencias/alerta/registro_acoes_gcp.md`](docs/evidencias/alerta/registro_acoes_gcp.md).
 
 ### 7.2 Em produção, quem descobre que o pipeline quebrou, e em quanto tempo?
 
-- **Falha registrada no log `tc-pipeline` com severidade ERROR:** o responsável pela frente 4 recebe o e-mail em cerca de **1 minuto** (medido: 52 s até o alerta abrir). O e-mail diz onde olhar (`pipeline_runs`, log `tc-pipeline` e `dq_results` pelo mesmo `execucao_id`).
-- **Regra bloqueante reprovada na Silver ou na Gold:** o script para com código 1, a camada seguinte não é publicada e o resultado fica em `dq_results`. Hoje quem descobre é **quem executou o script, na hora**, pelo terminal. Como os scripts ainda não gravam no log `tc-pipeline`, essa falha **não** gera e-mail. Ligar o logger da frente 4 à Silver e à Gold faz a mesma falha cair no alerta de 1 minuto.
+- **Falha registrada no log `tc-pipeline` com severidade ERROR:** o responsável pela frente 4 recebe o e-mail em **menos de 1 minuto** (medido: 15 s até o alerta abrir com uma falha real da Silver em 29/10; 52 s no teste de 28/10). O e-mail diz onde olhar (`pipeline_runs`, log `tc-pipeline` e `dq_results` pelo mesmo `execucao_id`).
+- **Regra bloqueante reprovada, SQL com erro ou portão da Gold fechado:** o script para com código 1, a camada seguinte não é publicada, a etapa fica com `status = 'falha'` em `pipeline_runs` e o erro vai para o log `tc-pipeline`, o que dispara o mesmo alerta. Quem executou vê a falha na hora, pelo terminal; o responsável recebe o e-mail em menos de 1 minuto (demonstrado em 29/10).
 - **Sem execução:** como não há orquestrador, um pipeline que simplesmente não rodou não gera alerta. Um agendador com alerta de ausência fica para uma próxima etapa (seção 5).
 
 ### 7.3 FinOps
@@ -427,7 +430,7 @@ Versões fixadas em `requirements.txt`.
 **Orçamento com alerta (Cloud Billing).** Orçamento `TC Fase 02`: mensal, só para o projeto Tech Challenge, todos os serviços, R$ 50,00, com alerta por e-mail aos administradores de faturamento em 25%, 50%, 90% e 100% do gasto real. Os créditos promocionais do free trial **não** são descontados, para o alerta acompanhar o consumo real. Prints em [`docs/evidencias/finops/`](docs/evidencias/finops/).
 
 **Quantidades medidas:**
-- leitura por execução completa de Silver e Gold: ≈ 2,3 GB (2,14 GiB), por dry run (seção 3.2);
+- leitura por execução completa de Silver e Gold: ≈ 2,3 GB processados (2,14 GiB), por dry run (seção 3.2), e **≈ 2,53 GB faturados**, medidos em `pipeline_runs` na execução de 29/10. A diferença é o mínimo de 10 MB cobrado por consulta, nas 75 consultas de uma execução;
 - armazenamento total: 1,74 GiB (catálogo);
 - uma carga completa da Bronze: 0,475 GiB;
 - consumo real de consultas de 17/10 a 26/10, durante o desenvolvimento: 418 consultas, 20,41 GiB faturados (`INFORMATION_SCHEMA.JOBS_BY_PROJECT`), o que daria US$ 0,22 a preço de tabela.
@@ -458,7 +461,7 @@ A Gold foi desenhada para ser reaproveitada na Fase 3 e está guardada em Parque
 ## 9. Limitações conhecidas
 
 - **Dado simulado no streaming:** 2 rodadas de 7 mensagens de 1 município, executadas com um notebook e não com os scripts de `streaming/`; servem para demonstrar o fluxo, não para análise (seção 3.5).
-- **Métricas de execução:** `ops_tc.pipeline_runs` e o alerta existem e foram testados, mas a Silver e a Gold ainda não gravam suas execuções nem escrevem no log do alerta (seção 7).
+- **Métricas de execução só no batch transformado:** a Silver e a Gold gravam em `pipeline_runs`; a ingestão da Bronze e o consumer do streaming ainda não (seção 7). Quem executa precisa do papel Gravador de registros (`roles/logging.logWriter`) para a falha chegar ao log e disparar o e-mail; sem ele, a falha fica só em `pipeline_runs` e no terminal.
 - **Lacunas da fonte:** `uf` não traz DF nem RR; `municipio` não traz RR e tem 5.550 municípios em vez de 5.570; as proporções por nível não existem em 2023; o número nacional de 2023 da tabela de meta (55,9) diverge do recalculado a partir dos microdados (57,46), sem causa confirmada (seção 3.3).
 - **Bronze sem partição:** a leitura da Silver cresce a cada nova carga (seção 6).
 - **Execução manual:** sem orquestrador; as etapas são comandos executados em sequência (seção 4).

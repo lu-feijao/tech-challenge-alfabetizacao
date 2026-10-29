@@ -1,4 +1,4 @@
-"""Regras de qualidade da frente 3 (catálogo em docs/frente3/regras_qualidade.md).
+"""Regras de qualidade da frente 3 (catálogo em docs/qualidade/regras_qualidade.md).
 
 Cada regra é uma consulta que devolve uma única coluna `valor` e um critério de aprovação.
 - bloqueante: se reprovar, a execução termina com erro e a camada seguinte não é publicada.

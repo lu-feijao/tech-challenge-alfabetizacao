@@ -4,3 +4,4 @@ pyarrow==26.0.0
 db-dtypes==1.8.0
 python-dotenv==1.2.4
 google-cloud-pubsub==2.43.0
+google-cloud-logging==3.17.0
