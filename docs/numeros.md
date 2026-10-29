@@ -27,10 +27,10 @@ Todo número que aparece no README ou no vídeo precisa estar aqui, com a fonte.
 
 | # | Número | Valor | Fonte | Medido em |
 |---|---|---|---|---|
-| 10 | Eventos simulados recebidos | **10**, em 2 rodadas (23/10 e 28/10), todos com `id_evento` distinto | `bronze_tc.eventos_alunos` | ✅ 29/10 |
-| 11 | Latência produção → recebimento | **0,91 a 17,11 s** (média 8,42 s nas 10). 23/10: mediana 14,45 s; 28/10: mediana 2,81 s | `bronze_tc.eventos_alunos.latencia_segundos` | ✅ 29/10 |
-| 12 | Eventos rejeitados | **2**, um por rodada, por campo ausente (`id_municipio`) | `ops_tc.eventos_rejeitados` | ✅ 29/10 |
-| 13 | Linhas por origem na Gold | **10.896 oficiais + 1 simulada** (município 3550308, 2026, taxa 34,86 sobre 10 eventos) | `gold_tc.indicador_por_origem` | ✅ 29/10 |
+| 10 | Eventos simulados recebidos | **15**, em 3 rodadas (23/10 e 28/10 com o notebook; 29/10 com os scripts do repositório), todos com `id_evento` distinto | `bronze_tc.eventos_alunos` | ✅ 29/10 |
+| 11 | Latência produção → recebimento | **0,91 a 17,11 s** (média 6,96 s, mediana 4,23 s nas 15). Por rodada: 23/10 mediana 14,45 s; 28/10 mediana 2,81 s; 29/10 mediana 4,23 s | `bronze_tc.eventos_alunos.latencia_segundos` | ✅ 29/10 |
+| 12 | Eventos rejeitados | **3**, um por rodada, por campo ausente (`id_municipio`) | `ops_tc.eventos_rejeitados` | ✅ 29/10 |
+| 13 | Linhas por origem na Gold | **10.896 oficiais + 1 simulada** (município 3550308, 2026, taxa 49,82 sobre 15 eventos) | `gold_tc.indicador_por_origem` | ✅ 29/10 |
 
 ## Custo (Frente 4)
 
