@@ -5,7 +5,7 @@
 
 ## Atualização de 24/10/2026: 26 tabelas
 
-**Como foi medido:** por consulta de leitura em `INFORMATION_SCHEMA` e nas metatabelas `__TABLES__`, com a SQL em `ops/sql/catalogo/catalogo_tabelas.sql` (leu 40 MB). O detalhe por tabela está em `docs/catalogo/catalogo_dados.md` e em `docs/finops/medicoes_dry_run.csv`.
+**Como foi medido:** por consulta de leitura em `INFORMATION_SCHEMA` e nas metatabelas `__TABLES__`, com a SQL em `ops/sql/catalogo/catalogo_tabelas.sql` (leu 40 MB). O detalhe por tabela está em `docs/dados/catalogo/catalogo_dados.md` e em `docs/finops/medicoes_dry_run.csv`.
 
 | Dataset | Tabelas | Linhas | Bytes lógicos |
 |---|---:|---:|---:|
@@ -133,7 +133,7 @@ Essas são as duas alavancas de custo que já dá para mostrar com número real:
 
 2. **Cada carga completa acrescenta cerca de 486 MB lógicos à Bronze** (972,62 MB ÷ 2 cargas), e a maior parte vem da tabela de alunos (≈ 481 MB por carga). Esse é o número base para projetar o crescimento do armazenamento na tabela de custo.
 
-3. **O projeto está no BigQuery Sandbox, sem faturamento.** O console mostra o aviso "Configure o faturamento". Isso tem três consequências:
+3. **O projeto estava no BigQuery Sandbox, sem faturamento** (situação de 24/10; em 28/10 o faturamento já estava ativo, ver `docs/finops/tabela_custo.md`, seção 1). O console mostra o aviso "Configure o faturamento". Isso tem três consequências:
    - **As tabelas expiram 60 dias após a criação.** A Bronze some em 15/12/2026 e a Silver e a Gold em 20/12/2026. Isso fica depois da entrega (03/11), mas os dados somem se a avaliação atrasar.
    - **O Sandbox não oferece streaming, nem DML de atualização ou exclusão.** Isso afeta o plano de gravar em `ops.pipeline_runs` com `insert_rows_json`, que é streaming, e também o consumidor da Frente 2.
    - **Na tabela de custo e no README**, o ambiente deve ser descrito como *Sandbox*, não como *trial*.

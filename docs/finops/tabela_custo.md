@@ -38,7 +38,7 @@ Fonte: catálogo oficial de SKUs do Google Cloud, consultado em 24/10/2026.
 
 | Item | Quantidade | Origem | Medido ou estimado |
 |---|---:|---|---|
-| Armazenamento lógico total (27 tabelas e 1 view) | 1,74 GiB | `__TABLES__` e INFORMATION_SCHEMA, em 28/10 (`docs/catalogo/`) | **medido** |
+| Armazenamento lógico total (27 tabelas e 1 view) | 1,74 GiB | `__TABLES__` e INFORMATION_SCHEMA, em 28/10 (`docs/dados/catalogo/`) | **medido** |
 | Tamanho de uma carga completa da Bronze | 0,475 GiB (486 MiB) | Bronze = 972,63 MiB com 2 cargas iguais | **medido** |
 | SQL da Silver (desenho atual: lê a Bronze inteira, com 2 cargas) | 1,02 GB, dos quais 1,009 GB em `silver_tc.alunos` | dry run da Frente 3 em 28/10 (README, "Custo medido") | **medido** |
 | Regras de qualidade da Silver | ≈ 1,0 GB | dry run da Frente 3 em 21/10 | **medido** |
