@@ -47,7 +47,7 @@ O faturado fica acima dos ≈ 2,3 GB processados (seção 3.2 do README) porque 
 
 ## Custo por etapa
 
-A view `ops_tc.vw_custo_por_etapa` passou a separar o custo por camada e etapa, porque os jobs da Silver e da Gold agora levam os labels `pipeline`/`camada`/`etapa`. As etapas mais caras são `silver/07_alunos` e `silver/regras_qualidade` (≈ 0,9 GiB cada por execução). Nos últimos 30 dias, as duas somam ≈ US$ 0,04 a preço de tabela.
+A view `ops_tc.vw_custo_por_etapa` passou a separar o custo por camada e etapa, porque os jobs da Silver e da Gold agora levam os labels `pipeline`/`camada`/`etapa`. As etapas mais caras são `07_alunos` e `regras_qualidade`, as duas na camada Silver (≈ 0,9 GiB cada por execução). Nos últimos 30 dias, as duas somam ≈ US$ 0,04 a preço de tabela.
 
 ## Como conferir
 

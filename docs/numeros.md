@@ -8,7 +8,7 @@ Todo número que aparece no README ou no vídeo precisa estar aqui, com a fonte.
 
 | # | Número | Valor | Fonte | Medido em |
 |---|---|---|---|---|
-| 1 | Tabelas no projeto | **28 objetos**: 27 tabelas e 1 view (bronze 9, silver 9, gold 6, ops 4) | `docs/dados/catalogo/catalogo_dados.md` (`ops/sql/catalogo/catalogo_tabelas.sql`) | ✅ 28/10 |
+| 1 | Tabelas no projeto | **28 objetos**: 27 tabelas e 1 view (bronze 9, silver 9, gold 6, ops 4) | `docs/dados/catalogo/catalogo_dados.md` | ✅ 28/10 |
 | 2 | Linhas de `bronze_tc.alunos` | **7.735.998** | catálogo | ✅ 24/10 |
 | 3 | Linhas de `silver_tc.alunos` | **3.867.999**, exatamente metade da Bronze, que tem 2 cargas em acréscimo | catálogo | ✅ 24/10 |
 | 4 | Armazenamento total | **1,74 GiB** lógicos (1.781,84 MiB) | catálogo | ✅ 28/10 |

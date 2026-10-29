@@ -47,7 +47,7 @@ Todas as camadas são datasets dentro do mesmo projeto do Google Cloud, e cada c
 | `quality/` | Regras de qualidade de dados (`regras.py`) e funções de execução e registro em `ops.dq_results` (`dq.py`) |
 | `streaming/` | Streaming: simulador (`producer.py`), consumidor em micro-lotes (`consumer.py`) e a validação dos eventos (`validacao.py`) |
 | `tests/` | Testes unitários da triagem de eventos e do registro de métricas (`python -m unittest discover -s tests -t .`) |
-| `ops/` | Observabilidade e custo: registro de métricas de execução (`run_logger.py`), DDL de `pipeline_runs` e view de custo por etapa (`sql/`), consulta de consumo real (`sql/finops/`) e a política de alerta exportada (`alerta_falha.json`) |
+| `ops/` | Observabilidade e custo: registro de métricas de execução (`run_logger.py`), DDL de `pipeline_runs` e view de custo por etapa (`sql/`), consulta de consumo real (`sql/finops/`), medição de linhas e bytes das tabelas por dry run (`medir_tabelas.py`) e a política de alerta exportada (`alerta_falha.json`) |
 | `docs/` | Documentação técnica, organizada por tema (detalhe abaixo) |
 
 Dentro de `docs/`:
@@ -303,7 +303,14 @@ gcloud pubsub topics create topico-alfabetizacao --project=SEU_PROJETO
 gcloud pubsub subscriptions create topico-alfabetizacao-sub --topic=topico-alfabetizacao --project=SEU_PROJETO
 ```
 
-As tabelas são criadas pelos próprios scripts.
+As tabelas são criadas pelos próprios scripts, inclusive `ops.dq_results` e `ops.pipeline_runs`.
+
+Para o alerta de falha por e-mail (opcional), crie um canal de e-mail no Cloud Monitoring, troque em [`ops/alerta_falha.json`](ops/alerta_falha.json) o ID do projeto e o `SUBSTITUIR_PELO_ID_DO_CANAL` pelo ID do canal, e crie a política. Para a view de custo por etapa, troque `{projeto}` e `{ops}` em [`ops/sql/vw_custo_por_etapa.sql`](ops/sql/vw_custo_por_etapa.sql) e rode o arquivo:
+
+```bash
+gcloud alpha monitoring policies create --policy-from-file=ops/alerta_falha.json --project=SEU_PROJETO
+bq query --use_legacy_sql=false < ops/sql/vw_custo_por_etapa.sql
+```
 
 ### Passo a passo (computador local)
 
