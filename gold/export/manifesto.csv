@@ -1,7 +1,7 @@
 tabela,arquivo,linhas_bigquery,linhas_exportadas,colunas,tabela_modificada_em,exportado_em
-gold_tc.brasil_meta,gold/export/brasil_meta.parquet,3,3,11,2026-10-23T22:49:47.305000+00:00,2026-10-28T20:03:51.432895+00:00
-gold_tc.evolucao_municipio,gold/export/evolucao_municipio.parquet,12650,12650,11,2026-10-23T22:49:48.620000+00:00,2026-10-28T20:03:51.432895+00:00
-gold_tc.indicador_por_origem,gold/export/indicador_por_origem.parquet,10897,10897,12,2026-10-23T22:49:52.200000+00:00,2026-10-28T20:03:51.432895+00:00
-gold_tc.municipio_meta,gold/export/municipio_meta.parquet,10896,10896,15,2026-10-23T22:49:44.174000+00:00,2026-10-28T20:03:51.432895+00:00
-gold_tc.uf_meta,gold/export/uf_meta.parquet,49,49,14,2026-10-23T22:49:45.983000+00:00,2026-10-28T20:03:51.432895+00:00
-gold_tc.validacao_cruzada,gold/export/validacao_cruzada.parquet,24143,24143,13,2026-10-23T22:49:50.658000+00:00,2026-10-28T20:03:51.432895+00:00
+gold_tc.brasil_meta,gold/export/brasil_meta.parquet,3,3,11,2026-10-29T00:44:05.221000+00:00,2026-10-29T00:44:42.955026+00:00
+gold_tc.evolucao_municipio,gold/export/evolucao_municipio.parquet,12650,12650,11,2026-10-29T00:44:06.693000+00:00,2026-10-29T00:44:42.955026+00:00
+gold_tc.indicador_por_origem,gold/export/indicador_por_origem.parquet,10897,10897,12,2026-10-29T00:44:09.990000+00:00,2026-10-29T00:44:42.955026+00:00
+gold_tc.municipio_meta,gold/export/municipio_meta.parquet,10896,10896,15,2026-10-29T00:44:02.179000+00:00,2026-10-29T00:44:42.955026+00:00
+gold_tc.uf_meta,gold/export/uf_meta.parquet,49,49,14,2026-10-29T00:44:03.749000+00:00,2026-10-29T00:44:42.955026+00:00
+gold_tc.validacao_cruzada,gold/export/validacao_cruzada.parquet,24143,24143,13,2026-10-29T00:44:08.463000+00:00,2026-10-29T00:44:42.955026+00:00

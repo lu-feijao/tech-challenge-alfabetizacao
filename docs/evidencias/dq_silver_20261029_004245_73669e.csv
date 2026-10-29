@@ -1,0 +1,48 @@
+execucao_id,executado_em,camada,tabela,regra_id,descricao,severidade,valor_medido,limiar,status
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E01,Chave única: um id_evento por linha (deduplicação),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E02,"Sem nulo em id_evento, origem, id_municipio, id_aluno, ano e horários",bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E03,Toda linha tem origem = 'simulado',bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E04,Latência medida e maior que zero (recebimento > produção),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E05,alfabetizado coerente com a proficiência (corte de 743),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E06,Proficiência (0 a 1000) e peso (> 0) na faixa válida,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E07,Match evento x município (silver.municipio) e UF com de-para,bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos_eventos,E08,Linhas repetidas por id_evento removidas da Bronze de eventos,informativa,0.0,,medida
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,alunos,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,municipio,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,uf,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,meta_alfabetizacao_municipio,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,meta_alfabetizacao_uf,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,meta_alfabetizacao_brasil,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,bronze,dicionario,R07,Última rodada da Bronze com >= 95% das linhas da rodada anterior (carga completa),bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,municipio,R01,Chave única após filtrar a última rodada (duplicidade),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,municipio,R02,Sem nulo em coluna de chave,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,municipio,R03,Nenhum código sem tradução ('desconhecido') nem UF sem de-para,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf,R01,Chave única após filtrar a última rodada (duplicidade),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf,R02,Sem nulo em coluna de chave,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf,R03,Nenhum código sem tradução ('desconhecido') nem UF sem de-para,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_municipio,R01,Chave única após filtrar a última rodada (duplicidade),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_municipio,R02,Sem nulo em coluna de chave,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_municipio,R03,Nenhum código sem tradução ('desconhecido') nem UF sem de-para,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_uf,R01,Chave única após filtrar a última rodada (duplicidade),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_uf,R02,Sem nulo em coluna de chave,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_uf,R03,Nenhum código sem tradução ('desconhecido') nem UF sem de-para,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_brasil,R01,Chave única após filtrar a última rodada (duplicidade),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_brasil,R02,Sem nulo em coluna de chave,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_brasil,R03,Nenhum código sem tradução ('desconhecido') nem UF sem de-para,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos,R01,Chave única após filtrar a última rodada (duplicidade),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos,R02,Sem nulo em coluna de chave,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos,R03,Nenhum código sem tradução ('desconhecido') nem UF sem de-para,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,municipio x meta_municipio,R04,"Match municipio (rede 3) x meta_municipio, lado de municipio, menor % entre os anos",bloqueante,97.32011747430249,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf x meta_uf,R12,"Match uf (rede 5) x meta_uf, lado de uf, menor % entre os anos",bloqueante,100.0,>= 95,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,municipio,R05,Valores dentro da faixa válida (taxas e metas 0-100; proficiência e peso > 0),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf,R05,Valores dentro da faixa válida (taxas e metas 0-100; proficiência e peso > 0),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_municipio,R05,Valores dentro da faixa válida (taxas e metas 0-100; proficiência e peso > 0),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_uf,R05,Valores dentro da faixa válida (taxas e metas 0-100; proficiência e peso > 0),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_brasil,R05,Valores dentro da faixa válida (taxas e metas 0-100; proficiência e peso > 0),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos,R05,Valores dentro da faixa válida (taxas e metas 0-100; proficiência e peso > 0),bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos,R06,Proficiência e peso nulos nas mesmas linhas,bloqueante,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,municipio,R08,"Soma das 9 proporções de nível = 100 ± 0,05 (só linhas com proporções)",informativa,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf,R08,"Soma das 9 proporções de nível = 100 ± 0,05 (só linhas com proporções)",informativa,0.0,== 0,aprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,meta_municipio x municipio,R09,"% de municípios (2023 e 2024) com taxa da meta municipal = taxa de municipio (tolerância 0,01)",informativa,62.54724111866969,>= 95,reprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,alunos,R10,Cadernos fora da faixa 1 a 21,informativa,18.0,== 0,reprovada
+silver_20261029_004245_73669e,2026-10-29T00:43:05.922092+00:00,silver,uf,R11,UFs com resultado em uf (de 27),informativa,25.0,>= 27,reprovada
