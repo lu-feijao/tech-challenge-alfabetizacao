@@ -217,7 +217,7 @@ Em 2024, 99,5% dos municípios (rede municipal) ficam a até 0,5 p.p. da taxa of
 
 ### Cópia da Gold para a Fase 3
 
-As tabelas do BigQuery podem expirar: os datasets foram criados no sandbox, com expiração padrão de 60 dias, que continua valendo depois da ativação do faturamento até ser removida. Por isso a Gold fica guardada também em [`gold/export/`](gold/export/): um arquivo Parquet por tabela e um `manifesto.csv` com as linhas no BigQuery, as linhas exportadas, a última modificação da tabela e o horário da cópia.
+Os datasets foram criados no sandbox do BigQuery, que expira tabelas em 60 dias; a expiração foi removida dos datasets e das tabelas em 28 e 29/10/2026, depois da ativação do faturamento. Mesmo assim, a Gold fica guardada também em [`gold/export/`](gold/export/): um arquivo Parquet por tabela e um `manifesto.csv` com as linhas no BigQuery, as linhas exportadas, a última modificação da tabela e o horário da cópia.
 
 Para gerar de novo, depois da Gold: `python gold/exportar_gold.py`. O script lê as tabelas pela API de leitura (sem consulta SQL, então sem bytes cobrados) e termina com código 1 se alguma contagem divergir. Cópia atual: das tabelas publicadas em 29/10/2026 (execução `gold_20261029_210133_58139e`; 6 tabelas, 58.638 linhas, cerca de 1 MB).
 
@@ -231,7 +231,7 @@ As regras ficam em [`quality/regras.py`](quality/regras.py) e o catálogo comple
 - **Registro persistente:** cada regra vira uma linha em `ops.dq_results` (execução, horário, tabela, regra, severidade, valor medido, limiar e status), gravada por **load job em modo append**. O histórico acumula entre execuções. Uma cópia de cada execução fica em `docs/evidencias/dq_<execucao>.csv`.
 - **Sem `except` genérico:** só a exceção específica de regra bloqueante é tratada, e o processo termina com erro.
 
-**Falha demonstrada:** `python silver/silver_transformacao.py --simular-falha` eleva o limiar de match da R04 para 99,9%. Na execução `silver_20261021_160213_34ac17` a R04 reprovou (97,32%), o resultado ficou gravado em `ops.dq_results`, o script terminou com código 1 e a Gold se recusou a rodar. Logs em [`docs/evidencias/falha_demonstrada/`](docs/evidencias/falha_demonstrada/).
+**Falha demonstrada:** `python silver/silver_transformacao.py --simular-falha` eleva o limiar de match da R04 para 99,9%. Na execução `silver_20261021_160213_34ac17` a R04 reprovou (97,32%), o resultado ficou gravado em `ops.dq_results`, o script terminou com código 1 e a Gold se recusou a rodar. Logs em [`docs/evidencias/falha_demonstrada/`](docs/evidencias/falha_demonstrada/). Em 29/10 a mesma falha foi repetida com as métricas de execução ligadas: a etapa ficou registrada em `ops_tc.pipeline_runs` e o alerta por e-mail abriu 15 s depois (seção 7).
 
 Revisão contra as armadilhas do enunciado: [`docs/qualidade/checklist_armadilhas.md`](docs/qualidade/checklist_armadilhas.md).
 
@@ -254,7 +254,7 @@ bronze_tc.eventos_alunos ─► silver_tc.alunos_eventos (dedup por id_evento) �
 - **Silver** (`silver/sql/08_alunos_eventos.sql`): fica a linha recebida primeiro de cada `id_evento`. Regras E01 a E08 (seção 3.4): chave única, sem nulos, `origem` sempre `simulado`, **latência maior que zero**, `alfabetizado` coerente com 743, faixas e match do município.
 - **Gold** (`gold/sql/06_indicador_por_origem.sql`): uma tabela com a taxa por município e a coluna `origem`. O número do simulador **não é indicador oficial**: as duas origens só dividem a tabela porque `origem` as separa, e nenhuma consulta deve somá-las ou compará-las sem filtrar. Os eventos usam o ano 2026, que não existe no indicador oficial (regra G07).
 
-### Batch × streaming (números medidos em 23/10 e 28/10/2026)
+### Batch × streaming (números medidos em 23/10, 28/10 e 29/10/2026)
 
 | | Batch (Bronze) | Streaming (eventos) |
 |---|---|---|
@@ -385,7 +385,7 @@ bq query --use_legacy_sql=false < ops/sql/vw_custo_por_etapa.sql
 | Google Cloud · BigQuery | Bronze, Silver, Gold e `ops` (4 datasets em `southamerica-east1`) | as tabelas oficiais já estão no BigQuery da Base dos Dados; SQL, armazenamento e processamento no mesmo serviço |
 | Google Cloud · Pub/Sub | mensageria do streaming (`topico-alfabetizacao`) | serviço gerenciado de mensagens do GCP, com entrega "pelo menos uma vez" |
 | Cloud Monitoring e Cloud Billing | alerta de falha e orçamento com alerta por e-mail (seção 7) | ferramentas nativas do mesmo projeto |
-| Python 3 | scripts de ingestão, Silver, Gold, qualidade, exportação e streaming | bibliotecas oficiais do Google (`google-cloud-bigquery`, `google-cloud-pubsub`) |
+| Python 3 | scripts de ingestão, Silver, Gold, qualidade, exportação, streaming e métricas de execução (`ops/run_logger.py`) | bibliotecas oficiais do Google (`google-cloud-bigquery`, `google-cloud-pubsub`, `google-cloud-logging`) |
 | SQL (BigQuery) | transformações da Silver e da Gold, um arquivo por tabela | versionável e legível; o processamento roda no BigQuery, não na máquina de quem executa |
 | pandas e pyarrow | carga da Bronze, gravação de `dq_results` e cópia da Gold em Parquet | |
 | `unittest` | testes da triagem de eventos e do registro de métricas (`tests/`) | biblioteca padrão, sem dependência extra |
@@ -472,7 +472,7 @@ A Gold foi desenhada para ser reaproveitada na Fase 3 e está guardada em Parque
 - **Lacunas da fonte:** `uf` não traz DF nem RR; `municipio` não traz RR e tem 5.550 municípios em vez de 5.570; as proporções por nível não existem em 2023; o número nacional de 2023 da tabela de meta (55,9) diverge do recalculado a partir dos microdados (57,46), sem causa confirmada (seção 3.3).
 - **Bronze sem partição:** a leitura da Silver cresce a cada nova carga (seção 6).
 - **Execução manual:** sem orquestrador; as etapas são comandos executados em sequência (seção 4).
-- **Ambiente:** o projeto rodou no sandbox do BigQuery até 28/10/2026, quando o faturamento foi ativado. Os datasets foram criados com a expiração padrão do sandbox (60 dias), que continua valendo até ser removida; por isso a Gold também foi guardada em Parquet.
+- **Ambiente:** o projeto rodou no sandbox do BigQuery até 28/10/2026, quando o faturamento foi ativado. Os datasets foram criados com a expiração padrão do sandbox (60 dias), removida dos datasets e das tabelas em 28 e 29/10/2026; a Gold também foi guardada em Parquet. A tabela órfã `bronze_tc.dicionario_copy` (cópia de 18/10, sem uso) manteve a expiração de propósito e vence em 17/12/2026.
 - **Revisão de código:** os pull requests foram juntados sem revisão de outra frente.
 
 ## 10. Equipe
