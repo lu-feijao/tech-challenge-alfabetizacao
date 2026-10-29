@@ -6,6 +6,8 @@
 3. Grava o resultado de todas as regras em ops.dq_results (load job, só acrescenta) e em docs/evidencias/.
 4. Se alguma regra bloqueante reprovar, termina com código 1. A Gold verifica esse resultado
    antes de rodar e não é publicada sobre uma Silver reprovada.
+5. Cada etapa (cada SQL, as regras e a gravação) vira uma linha em ops.pipeline_runs (ops/run_logger.py).
+   Uma falha também é escrita no log tc-pipeline, que dispara o alerta por e-mail.
 
 Uso (a partir da raiz do repositório):
     python silver/silver_transformacao.py
@@ -33,6 +35,7 @@ from quality.dq import (  # noqa: E402
     tabela_existe,
 )
 from quality.regras import regras_silver  # noqa: E402
+from ops.run_logger import RegistroExecucao, executar_sql_registrado  # noqa: E402
 
 PASTA_SQL = RAIZ / "silver" / "sql"
 
@@ -49,37 +52,47 @@ def main(argv=None) -> int:
     client = conectar(cfg)
     execucao_id = novo_execucao_id("silver")
     print("Execução:", execucao_id, "\n")
-
-    print("== Silver: transformações ==")
-    for arquivo in sorted(PASTA_SQL.glob("*.sql")):
-        pendentes = requisitos_pendentes(client, arquivo, cfg)
-        if pendentes:
-            print(f"   {arquivo.name}: PULADO (etapa opcional; falta {', '.join(pendentes)})")
-            continue
-        executar_sql(client, arquivo, cfg)
-
-    print("\n== Silver: regras de qualidade ==")
-    limiar_r04 = 99.9 if args.simular_falha else 95.0
-    if args.simular_falha:
-        print("   (simulação de falha: limiar da R04 elevado para 99,9%)")
-    # As regras dos eventos só entram se a Silver de eventos foi criada nesta execução
-    com_eventos = tabela_existe(client, f"{cfg['projeto']}.{cfg['silver']}.alunos_eventos")
-    resultados = avaliar_regras(
-        client, regras_silver(limiar_match_municipio=limiar_r04, incluir_eventos=com_eventos), cfg, execucao_id
-    )
-
-    print("\n== Gravação dos resultados ==")
-    gravar_resultados(client, cfg, resultados, "silver")
+    registro = RegistroExecucao(client, cfg, execucao_id, camada="silver")
 
     try:
-        exigir_bloqueantes_aprovadas(resultados)
-    except RegraBloqueanteReprovada as erro:
-        print(f"\nERRO: {erro}")
-        print("A Gold não deve ser publicada sobre esta Silver.")
-        return 1
+        print("== Silver: transformações ==")
+        for arquivo in sorted(PASTA_SQL.glob("*.sql")):
+            pendentes = requisitos_pendentes(client, arquivo, cfg)
+            if pendentes:
+                print(f"   {arquivo.name}: PULADO (etapa opcional; falta {', '.join(pendentes)})")
+                continue
+            executar_sql_registrado(registro, arquivo, executar_sql)
 
-    print("\nSilver publicada: todas as regras bloqueantes aprovadas.")
-    return 0
+        print("\n== Silver: regras de qualidade ==")
+        limiar_r04 = 99.9 if args.simular_falha else 95.0
+        if args.simular_falha:
+            print("   (simulação de falha: limiar da R04 elevado para 99,9%)")
+        # As regras dos eventos só entram se a Silver de eventos foi criada nesta execução
+        com_eventos = tabela_existe(client, f"{cfg['projeto']}.{cfg['silver']}.alunos_eventos")
+        regras = regras_silver(limiar_match_municipio=limiar_r04, incluir_eventos=com_eventos)
+        with registro.etapa("regras_qualidade") as medida:
+            resultados = avaliar_regras(client, regras, cfg, execucao_id,
+                                        job_config=registro.config_job("regras_qualidade"), medida=medida)
+            medida.linhas_entrada, medida.linhas_saida = len(regras), len(resultados)
+
+        print("\n== Gravação dos resultados ==")
+        with registro.etapa("gravar_dq_results", tabela=f"{cfg['ops']}.dq_results") as medida:
+            gravar_resultados(client, cfg, resultados, "silver")
+            medida.linhas_saida = len(resultados)
+
+        try:
+            exigir_bloqueantes_aprovadas(resultados)
+        except RegraBloqueanteReprovada as erro:
+            print(f"\nERRO: {erro}")
+            print("A Gold não deve ser publicada sobre esta Silver.")
+            registro.falha("regras_bloqueantes", str(erro), tabela=f"{cfg['ops']}.dq_results")
+            return 1
+
+        print("\nSilver publicada: todas as regras bloqueantes aprovadas.")
+        return 0
+    finally:
+        print("\n== Métricas de execução ==")
+        registro.gravar()
 
 
 if __name__ == "__main__":

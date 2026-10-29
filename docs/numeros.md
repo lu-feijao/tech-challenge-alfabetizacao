@@ -52,6 +52,6 @@ Todo número que aparece no README ou no vídeo precisa estar aqui, com a fonte.
 
 | # | Número | Valor | Fonte | Medido em |
 |---|---|---|---|---|
-| 22 | Execuções registradas em `ops_tc.pipeline_runs` | **4 linhas de teste** (`etapa='teste_frente4'`), de 2 execuções: 26/10 e 28/10, cada uma com 1 sucesso e 1 falha. Nenhuma etapa real ainda usa o logger | `SELECT * FROM ops_tc.pipeline_runs` | ✅ 28/10 |
-| 23 | Tempo entre a falha e o e-mail | **≈ 1 minuto**: falha às 20:20:29, alerta aberto às 20:21:21 (52 s), e-mail recebido às 20:21 | teste `python -m ops.testar_alerta`, execução `teste_20261028_232024_f5c54d`; print em `docs/evidencias/alerta/` | ✅ 28/10 |
-| 24 | Duração de uma execução completa do batch | **pendente**: vem de `pipeline_runs` | `SELECT SUM(duracao_seg) ... GROUP BY execucao_id` | ⏳ |
+| 22 | Execuções registradas em `ops_tc.pipeline_runs` | **3 execuções reais em 29/10** (Silver com `--simular-falha`: 11 etapas, 1 falha; Silver: 10 etapas; Gold: 8 etapas), além das 4 linhas de teste de 26/10 e 28/10 (`etapa='teste_frente4'`) | `SELECT * FROM ops_tc.pipeline_runs` | ✅ 29/10 |
+| 23 | Tempo entre a falha e o alerta | **15 s** com falha real da Silver (29/10: falha 17:35:40, alerta 17:35:55, e-mail 17:35); 52 s no teste de 28/10 | `pipeline_runs`, Cloud Monitoring; prints e detalhes em `docs/evidencias/alerta/` | ✅ 29/10 |
+| 24 | Duração de uma execução completa do batch (Silver + Gold) | **≈ 85 s** (Silver 62,2 s; Gold 23,1 s); ≈ 2,53 GB faturados (Silver 2,166; Gold 0,368) | `SELECT SUM(duracao_seg), SUM(bytes_faturados) ... GROUP BY execucao_id` | ✅ 29/10 |

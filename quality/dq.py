@@ -3,6 +3,7 @@
 Os resultados das regras são gravados em ops.dq_results por LOAD JOB (WRITE_APPEND), e não por INSERT:
 load job funciona inclusive no BigQuery sandbox, que bloqueia DML.
 """
+import copy
 import os
 import sys
 import uuid
@@ -75,16 +76,21 @@ def novo_execucao_id(etapa: str) -> str:
     return f"{etapa}_{datetime.now(timezone.utc):%Y%m%d_%H%M%S}_{uuid.uuid4().hex[:6]}"
 
 
-def executar_sql(client: bigquery.Client, arquivo: Path, cfg: dict) -> dict:
-    """Executa um arquivo .sql (pode ter várias instruções) com os marcadores preenchidos pelo .env."""
+def executar_sql(client: bigquery.Client, arquivo: Path, cfg: dict, job_config=None) -> dict:
+    """Executa um arquivo .sql (pode ter várias instruções) com os marcadores preenchidos pelo .env.
+    job_config (opcional) traz os labels e o teto de bytes de ops/run_logger.py."""
     sql = arquivo.read_text(encoding="utf-8").format(**cfg)
     inicio = datetime.now(timezone.utc)
-    job = client.query(sql)
+    job = client.query(sql, job_config=job_config)
     job.result()  # erro de SQL interrompe aqui, de propósito
     duracao = (datetime.now(timezone.utc) - inicio).total_seconds()
     gb = (job.total_bytes_processed or 0) / 1e9
     print(f"   {arquivo.name}: ok | job {job.job_id} | {gb:.3f} GB processados | {duracao:.1f} s")
-    return {"arquivo": arquivo.name, "job_id": job.job_id, "gb_processados": round(gb, 4), "duracao_s": round(duracao, 1)}
+    return {
+        "arquivo": arquivo.name, "job_id": job.job_id, "gb_processados": round(gb, 4), "duracao_s": round(duracao, 1),
+        "bytes_processados": job.total_bytes_processed or 0, "bytes_faturados": job.total_bytes_billed or 0,
+        "sql": sql,
+    }
 
 
 def tabela_existe(client: bigquery.Client, id_tabela: str) -> bool:
@@ -118,11 +124,18 @@ def _aprovada(valor, operador, limiar) -> bool:
     return {"==": valor == limiar, "<=": valor <= limiar, ">=": valor >= limiar}[operador]
 
 
-def avaliar_regras(client: bigquery.Client, regras: list, cfg: dict, execucao_id: str) -> list:
+def avaliar_regras(client: bigquery.Client, regras: list, cfg: dict, execucao_id: str, job_config=None,
+                   medida=None) -> list:
+    """Avalia as regras. job_config e medida (opcionais) vêm de ops/run_logger.py: labels, teto de bytes
+    e a soma de jobs e bytes da etapa de regras."""
     executado_em = datetime.now(timezone.utc)
     resultados = []
     for r in regras:
-        linhas = list(client.query(r.sql.format(**cfg)).result())
+        job = client.query(r.sql.format(**cfg), job_config=copy.deepcopy(job_config))
+        linhas = list(job.result())
+        if medida is not None:
+            medida.adicionar_job({"job_id": job.job_id, "bytes_processados": job.total_bytes_processed,
+                                  "bytes_faturados": job.total_bytes_billed})
         valor = linhas[0]["valor"] if linhas else None
         valor = float(valor) if valor is not None else None
         if r.operador is None:

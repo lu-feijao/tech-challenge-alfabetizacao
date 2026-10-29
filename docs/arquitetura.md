@@ -2,7 +2,7 @@
 
 Versão em imagem: [`arquitetura.png`](arquitetura.png).
 
-O diagrama mostra **só o que existe no projeto em 28/10/2026**, conferido pelo catálogo (`docs/dados/catalogo/catalogo_dados.md`). Linhas tracejadas são fluxos de controle ou observabilidade. **Atenção (29/10):** as setas "cada etapa (logger)" da Silver e da Gold para `pipeline_runs` são o desenho pretendido. Em 29/10 a tabela, a política de alerta e o canal de e-mail existem e foram testados (`pipeline_runs` tem 4 linhas de teste), mas os scripts da Silver e da Gold ainda não gravam nela. A Bronze e o streaming também não usam o logger.
+O diagrama mostra **só o que existe no projeto em 28/10/2026**, conferido pelo catálogo (`docs/dados/catalogo/catalogo_dados.md`). Linhas tracejadas são fluxos de controle ou observabilidade. A Silver e a Gold gravam cada etapa em `pipeline_runs` por meio de `ops/run_logger.py` (desde 29/10); uma falha também vai para o log `tc-pipeline`, que dispara o alerta. A Bronze e o streaming ainda não usam o logger.
 
 ```mermaid
 flowchart LR

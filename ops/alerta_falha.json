@@ -1,0 +1,30 @@
+{
+  "displayName": "Pipeline TC - falha",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "Log match condition",
+      "conditionMatchedLog": {
+        "filter": "logName=\"projects/project-ce782257-1c9c-4b6f-87a/logs/tc-pipeline\"\nseverity>=ERROR"
+      }
+    }
+  ],
+  "documentation": {
+    "content": "Uma etapa do pipeline do Tech Challenge falhou.\n\nOnde olhar:\n- BigQuery: SELECT * FROM ops_tc.pipeline_runs WHERE status = 'falha' ORDER BY inicio DESC\n- Cloud Logging: log tc-pipeline, severidade ERROR (o campo erro traz a mensagem).\n- Se a falha veio de regra de qualidade: ops_tc.dq_results com o mesmo execucao_id.",
+    "mimeType": "text/markdown"
+  },
+  "notificationChannels": [
+    "projects/project-ce782257-1c9c-4b6f-87a/notificationChannels/SUBSTITUIR_PELO_ID_DO_CANAL"
+  ],
+  "enabled": true,
+  "alertStrategy": {
+    "notificationRateLimit": {
+      "period": "300s"
+    },
+    "notificationPrompts": [
+      "OPENED"
+    ],
+    "autoClose": "1800s"
+  },
+  "severity": "ERROR"
+}
