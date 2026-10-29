@@ -57,4 +57,4 @@ flowchart LR
 | `gold_tc` | 6 | 58.638 | 5,41 MiB |
 | `ops_tc` | 3 tabelas e 1 view (`vw_custo_por_etapa`); `pipeline_runs` tem só as 4 linhas dos testes de 26/10 e 28/10 | 192 | 31,31 KiB |
 
-**Região:** `southamerica-east1`. **Ambiente:** faturamento ativo (conferido em 28/10/2026; antes, BigQuery Sandbox). As tabelas criadas no Sandbox mantêm a data de expiração: 15/12 (Bronze) e 22/12 (`eventos_alunos` e `eventos_rejeitados`). A Silver e a Gold foram recriadas em 28/10, depois que os datasets perderam a expiração padrão, e não expiram mais.
+**Região:** `southamerica-east1`. **Ambiente:** faturamento ativo (conferido em 28/10/2026; antes, BigQuery Sandbox). A expiração herdada do Sandbox foi removida dos datasets (28/10) e de todas as tabelas e partições (29/10), exceto a cópia órfã `bronze_tc.dicionario_copy`, que vence em 17/12/2026.
