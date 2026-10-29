@@ -1,0 +1,27 @@
+dataset,tabela,camada,dono_provavel,finalidade,linhas,bytes_logicos,colunas,particao,cluster,expiracao,criada_em,modificada_em
+bronze_tc,alunos,Bronze,Frente 1,"Microdados de alunos da avaliação estadual, como vieram da fonte. Acréscimo a cada carga, com _ingestion_timestamp e _source.",7735998,1008986358,14,,,15/12/2026,2026-10-16 16:49,2026-10-17 16:22
+bronze_tc,dicionario,Bronze,Frente 1,"Dicionário de códigos da fonte (id_tabela, nome_coluna, chave → valor).",54,5858,7,,,15/12/2026,2026-10-16 16:48,2026-10-17 16:22
+bronze_tc,dicionario_copy,Bronze,a confirmar,"Mesmo conteúdo de bronze_tc.dicionario (54 linhas), criada em 18/10. Parece cópia de teste.",54,5858,7,,,17/12/2026,2026-10-18 11:42,2026-10-18 11:42
+bronze_tc,eventos_alunos,Bronze,Frente 2,"Eventos simulados de alunos recebidos pelo streaming, com origem, horário de produção, horário de recebimento e latência.",5,1120,25,,,22/12/2026,2026-10-23 19:16,2026-10-23 19:17
+bronze_tc,meta_alfabetizacao_brasil,Bronze,Frente 1,"Taxa de alfabetização e metas 2024–2030 para o Brasil, por rede.",6,1020,13,,,15/12/2026,2026-10-16 16:48,2026-10-17 16:21
+bronze_tc,meta_alfabetizacao_municipio,Bronze,Frente 1,Taxa de alfabetização e metas 2024–2030 por município e rede.,21408,4079328,15,,,15/12/2026,2026-10-16 16:48,2026-10-17 16:21
+bronze_tc,meta_alfabetizacao_uf,Bronze,Frente 1,Taxa de alfabetização e metas 2024–2030 por UF e rede.,162,27060,14,,,15/12/2026,2026-10-16 16:48,2026-10-17 16:21
+bronze_tc,municipio,Bronze,Frente 1,"Resultado por município: taxa de alfabetização, média em português e proporção de alunos por nível.",47990,6735482,17,,,15/12/2026,2026-10-16 16:48,2026-10-17 16:21
+bronze_tc,uf,Bronze,Frente 1,"Resultado por UF: taxa de alfabetização, média em português e proporção de alunos por nível.",290,37190,17,,,15/12/2026,2026-10-16 16:48,2026-10-17 16:21
+gold_tc,brasil_meta,Gold,Frente 3,"Taxa x meta para o Brasil, com distância da meta e status.",3,214,11,,,22/12/2026,2026-10-23 19:49,2026-10-23 19:49
+gold_tc,evolucao_municipio,Gold,Frente 3,Evolução da taxa por município entre 2023 e 2024 (variação em p.p. e tendência).,12650,1043795,11,,,22/12/2026,2026-10-23 19:49,2026-10-23 19:49
+gold_tc,indicador_por_origem,Gold,Frente 2 / Frente 3,Indicador por município separado por origem (dado oficial x simulado).,10897,893611,12,,,22/12/2026,2026-10-23 19:49,2026-10-23 19:49
+gold_tc,municipio_meta,Gold,Frente 3,"Taxa x meta por município, com status da meta (atingiu, não atingiu, sem meta).",10896,1390160,15,,,22/12/2026,2026-10-23 19:49,2026-10-23 19:49
+gold_tc,uf_meta,Gold,Frente 3,"Taxa x meta por UF, com status da meta.",49,6888,14,,,22/12/2026,2026-10-23 19:49,2026-10-23 19:49
+gold_tc,validacao_cruzada,Gold,Frente 3,Taxa recalculada a partir dos alunos (com peso amostral) comparada à taxa oficial.,24143,2337805,13,,,22/12/2026,2026-10-23 19:49,2026-10-23 19:49
+ops_tc,dq_results,Operação,Frente 3,Resultado de cada regra de qualidade por execução (bloqueante ou informativa).,187,30669,10,executado_em,,partições expiram em 60 dias,2026-10-20 18:09,2026-10-23 19:50
+ops_tc,eventos_rejeitados,Operação,Frente 2,"Eventos de streaming rejeitados, com motivo e mensagem original.",1,694,4,,,22/12/2026,2026-10-23 19:17,2026-10-23 19:17
+silver_tc,alunos,Silver,Frente 3,"Alunos limpos e padronizados, com códigos traduzidos pelo dicionário. Particionada por ano e agrupada por UF e município.",3867999,832907637,22,ano,"sigla_uf,id_municipio",22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,alunos_eventos,Silver,Frente 2,"Eventos simulados no formato da Silver de alunos, mantendo origem e horários do evento.",5,1120,25,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,de_para_rede_meta,Silver,Frente 3,De-para do texto de rede usado nas metas para o código de rede.,2,27,2,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,de_para_uf,Silver,Frente 3,De-para do código IBGE da UF para a sigla.,27,216,2,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,meta_brasil,Silver,Frente 3,Metas do Brasil em formato longo (uma linha por ano de meta).,21,2940,11,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,meta_municipio,Silver,Frente 3,Metas por município em formato longo (uma linha por ano de meta).,37464,4981752,10,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,meta_uf,Silver,Frente 3,Metas por UF em formato longo (uma linha por ano de meta).,567,78756,12,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,municipio,Silver,Frente 3,"Resultado por município padronizado, com UF e descrições de série e rede.",23995,4810234,21,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48
+silver_tc,uf,Silver,Frente 3,"Resultado por UF padronizado, com descrições de série e rede.",145,26334,20,,,22/12/2026,2026-10-23 19:48,2026-10-23 19:48

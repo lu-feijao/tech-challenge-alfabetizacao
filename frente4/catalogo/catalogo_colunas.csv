@@ -1,0 +1,345 @@
+dataset,tabela,posicao,coluna,tipo,obrigatoria,descricao
+bronze_tc,alunos,1,ano,INT64,não,Ano de aplicação da avaliação estadual
+bronze_tc,alunos,2,id_municipio,STRING,não,ID Município de 7 dígitos
+bronze_tc,alunos,3,id_escola,STRING,não,Máscara do código da escola (códigos fictícios)
+bronze_tc,alunos,4,id_aluno,STRING,não,Código do aluno
+bronze_tc,alunos,5,caderno,STRING,não,Código do caderno atribuído ao aluno na prova de língua portuguesa
+bronze_tc,alunos,6,serie,STRING,não,Ano escolar
+bronze_tc,alunos,7,rede,STRING,não,Dependência administrativa da escola
+bronze_tc,alunos,8,presenca,STRING,não,Indicador de presença na prova de língua portuguesa
+bronze_tc,alunos,9,preenchimento_caderno,STRING,não,Indicador de preenchimento da prova de língua portuguesa
+bronze_tc,alunos,10,alfabetizado,STRING,não,"Indica se o aluno, mediante o resultado da avaliação estadual, é considerado alfabetizado"
+bronze_tc,alunos,11,proficiencia,FLOAT64,não,Proficiência do aluno em língua portuguesa calculada na escala equalizada com o SAEB
+bronze_tc,alunos,12,peso_aluno,FLOAT64,não,Peso do aluno na prova de língua portuguesa
+bronze_tc,alunos,13,_ingestion_timestamp,TIMESTAMP,não,Timestamp de ingestão da tabela
+bronze_tc,alunos,14,_source,STRING,não,Origem da tabela
+bronze_tc,dicionario,1,id_tabela,STRING,não,
+bronze_tc,dicionario,2,nome_coluna,STRING,não,
+bronze_tc,dicionario,3,chave,STRING,não,
+bronze_tc,dicionario,4,cobertura_temporal,STRING,não,
+bronze_tc,dicionario,5,valor,STRING,não,
+bronze_tc,dicionario,6,_ingestion_timestamp,TIMESTAMP,não,
+bronze_tc,dicionario,7,_source,STRING,não,
+bronze_tc,dicionario_copy,1,id_tabela,STRING,não,
+bronze_tc,dicionario_copy,2,nome_coluna,STRING,não,
+bronze_tc,dicionario_copy,3,chave,STRING,não,
+bronze_tc,dicionario_copy,4,cobertura_temporal,STRING,não,
+bronze_tc,dicionario_copy,5,valor,STRING,não,
+bronze_tc,dicionario_copy,6,_ingestion_timestamp,TIMESTAMP,não,
+bronze_tc,dicionario_copy,7,_source,STRING,não,
+bronze_tc,eventos_alunos,1,id_evento,STRING,não,
+bronze_tc,eventos_alunos,2,origem,STRING,não,
+bronze_tc,eventos_alunos,3,horario_producao,TIMESTAMP,não,
+bronze_tc,eventos_alunos,4,horario_recebimento,TIMESTAMP,não,
+bronze_tc,eventos_alunos,5,latencia_segundos,FLOAT64,não,
+bronze_tc,eventos_alunos,6,ano,INT64,não,
+bronze_tc,eventos_alunos,7,id_municipio,STRING,não,
+bronze_tc,eventos_alunos,8,cod_uf,STRING,não,
+bronze_tc,eventos_alunos,9,sigla_uf,STRING,não,
+bronze_tc,eventos_alunos,10,id_escola,STRING,não,
+bronze_tc,eventos_alunos,11,id_aluno,STRING,não,
+bronze_tc,eventos_alunos,12,caderno,STRING,não,
+bronze_tc,eventos_alunos,13,serie,STRING,não,
+bronze_tc,eventos_alunos,14,serie_descricao,STRING,não,
+bronze_tc,eventos_alunos,15,rede,STRING,não,
+bronze_tc,eventos_alunos,16,rede_descricao,STRING,não,
+bronze_tc,eventos_alunos,17,presenca,STRING,não,
+bronze_tc,eventos_alunos,18,presenca_descricao,STRING,não,
+bronze_tc,eventos_alunos,19,preenchimento_caderno,STRING,não,
+bronze_tc,eventos_alunos,20,preenchimento_caderno_descricao,STRING,não,
+bronze_tc,eventos_alunos,21,alfabetizado,STRING,não,
+bronze_tc,eventos_alunos,22,alfabetizado_descricao,STRING,não,
+bronze_tc,eventos_alunos,23,avaliado,BOOL,não,
+bronze_tc,eventos_alunos,24,proficiencia,FLOAT64,não,
+bronze_tc,eventos_alunos,25,peso_aluno,FLOAT64,não,
+bronze_tc,meta_alfabetizacao_brasil,1,ano,INT64,não,Ano da avaliação
+bronze_tc,meta_alfabetizacao_brasil,2,rede,STRING,não,Rede de ensino
+bronze_tc,meta_alfabetizacao_brasil,3,taxa_alfabetizacao,FLOAT64,não,"Percentual dos alunos avaliados no estado que foram considerados, mediante o resultado da avaliação estadual, como alfabetizados"
+bronze_tc,meta_alfabetizacao_brasil,4,meta_alfabetizacao_2024,FLOAT64,não,Meta de alfabetização no ano de 2024
+bronze_tc,meta_alfabetizacao_brasil,5,meta_alfabetizacao_2025,FLOAT64,não,Meta de alfabetização no ano de 2025
+bronze_tc,meta_alfabetizacao_brasil,6,meta_alfabetizacao_2026,FLOAT64,não,Meta de alfabetização no ano de 2026
+bronze_tc,meta_alfabetizacao_brasil,7,meta_alfabetizacao_2027,FLOAT64,não,Meta de alfabetização no ano de 2027
+bronze_tc,meta_alfabetizacao_brasil,8,meta_alfabetizacao_2028,FLOAT64,não,Meta de alfabetização no ano de 2028
+bronze_tc,meta_alfabetizacao_brasil,9,meta_alfabetizacao_2029,FLOAT64,não,Meta de alfabetização no ano de 2029
+bronze_tc,meta_alfabetizacao_brasil,10,meta_alfabetizacao_2030,FLOAT64,não,Meta de alfabetização no ano de 2030
+bronze_tc,meta_alfabetizacao_brasil,11,percentual_participacao,FLOAT64,não,Percentual de participação no estado
+bronze_tc,meta_alfabetizacao_brasil,12,_ingestion_timestamp,TIMESTAMP,não,Timestamp de ingestão da tabela
+bronze_tc,meta_alfabetizacao_brasil,13,_source,STRING,não,Origem da tabela
+bronze_tc,meta_alfabetizacao_municipio,1,ano,INT64,não,Ano da avaliação
+bronze_tc,meta_alfabetizacao_municipio,2,id_municipio,STRING,não,Sigla da unidade da federação
+bronze_tc,meta_alfabetizacao_municipio,3,rede,STRING,não,Rede de ensino
+bronze_tc,meta_alfabetizacao_municipio,4,taxa_alfabetizacao,FLOAT64,não,"Percentual dos alunos avaliados no estado que foram considerados, mediante o resultado da avaliação estadual, como alfabetizados"
+bronze_tc,meta_alfabetizacao_municipio,5,meta_alfabetizacao_2024,FLOAT64,não,Meta de alfabetização no ano de 2024
+bronze_tc,meta_alfabetizacao_municipio,6,meta_alfabetizacao_2025,FLOAT64,não,Meta de alfabetização no ano de 2025
+bronze_tc,meta_alfabetizacao_municipio,7,meta_alfabetizacao_2026,FLOAT64,não,Meta de alfabetização no ano de 2026
+bronze_tc,meta_alfabetizacao_municipio,8,meta_alfabetizacao_2027,FLOAT64,não,Meta de alfabetização no ano de 2027
+bronze_tc,meta_alfabetizacao_municipio,9,meta_alfabetizacao_2028,FLOAT64,não,Meta de alfabetização no ano de 2028
+bronze_tc,meta_alfabetizacao_municipio,10,meta_alfabetizacao_2029,FLOAT64,não,Meta de alfabetização no ano de 2029
+bronze_tc,meta_alfabetizacao_municipio,11,meta_alfabetizacao_2030,FLOAT64,não,Meta de alfabetização no ano de 2030
+bronze_tc,meta_alfabetizacao_municipio,12,nivel_alfabetizacao,INT64,não,Nível de alfabetização
+bronze_tc,meta_alfabetizacao_municipio,13,percentual_participacao,FLOAT64,não,Percentual de participação por município
+bronze_tc,meta_alfabetizacao_municipio,14,_ingestion_timestamp,TIMESTAMP,não,Timestamp de ingestão da tabela
+bronze_tc,meta_alfabetizacao_municipio,15,_source,STRING,não,Origem da tabela
+bronze_tc,meta_alfabetizacao_uf,1,ano,INT64,não,Ano da avaliação
+bronze_tc,meta_alfabetizacao_uf,2,sigla_uf,STRING,não,Sigla da unidade da federação
+bronze_tc,meta_alfabetizacao_uf,3,rede,STRING,não,Rede de ensino
+bronze_tc,meta_alfabetizacao_uf,4,taxa_alfabetizacao,FLOAT64,não,"Percentual dos alunos avaliados no estado que foram considerados, mediante o resultado da avaliação estadual, como alfabetizados"
+bronze_tc,meta_alfabetizacao_uf,5,meta_alfabetizacao_2024,FLOAT64,não,Meta de alfabetização no ano de 2024
+bronze_tc,meta_alfabetizacao_uf,6,meta_alfabetizacao_2025,FLOAT64,não,Meta de alfabetização no ano de 2025
+bronze_tc,meta_alfabetizacao_uf,7,meta_alfabetizacao_2026,FLOAT64,não,Meta de alfabetização no ano de 2026
+bronze_tc,meta_alfabetizacao_uf,8,meta_alfabetizacao_2027,FLOAT64,não,Meta de alfabetização no ano de 2027
+bronze_tc,meta_alfabetizacao_uf,9,meta_alfabetizacao_2028,FLOAT64,não,Meta de alfabetização no ano de 2028
+bronze_tc,meta_alfabetizacao_uf,10,meta_alfabetizacao_2029,FLOAT64,não,Meta de alfabetização no ano de 2029
+bronze_tc,meta_alfabetizacao_uf,11,meta_alfabetizacao_2030,FLOAT64,não,Meta de alfabetização no ano de 2030
+bronze_tc,meta_alfabetizacao_uf,12,percentual_participacao,FLOAT64,não,Percentual de participação no estado
+bronze_tc,meta_alfabetizacao_uf,13,_ingestion_timestamp,TIMESTAMP,não,Timestamp de ingestão da tabela
+bronze_tc,meta_alfabetizacao_uf,14,_source,STRING,não,Origem da tabela
+bronze_tc,municipio,1,ano,INT64,não,Ano de aplicação da avaliação estadual
+bronze_tc,municipio,2,id_municipio,STRING,não,ID Município
+bronze_tc,municipio,3,serie,STRING,não,Ano escolar
+bronze_tc,municipio,4,rede,STRING,não,Rede de ensino
+bronze_tc,municipio,5,taxa_alfabetizacao,FLOAT64,não,"Percentual dos alunos avaliados no município que foram considerados, mediante o resultado da avaliação estadual, como alfabetizados"
+bronze_tc,municipio,6,media_portugues,FLOAT64,não,Média ponderada do município na avaliação estadual na disciplina Língua Portuguesa (LP) equalizada com o SAEB
+bronze_tc,municipio,7,proporcao_aluno_nivel_0,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 0 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,8,proporcao_aluno_nivel_1,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 1 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,9,proporcao_aluno_nivel_2,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 2 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,10,proporcao_aluno_nivel_3,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 3 na avaliação estadual de Língua Portuguesa (LP)
+bronze_tc,municipio,11,proporcao_aluno_nivel_4,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 3 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,12,proporcao_aluno_nivel_5,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 4 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,13,proporcao_aluno_nivel_6,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 5 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,14,proporcao_aluno_nivel_7,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 6 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,15,proporcao_aluno_nivel_8,FLOAT64,não,Percentual de alunos avaliados no município que foram alocados no nível de desempenho 7 na avaliação estadual de Lingua Portuguesa (LP)
+bronze_tc,municipio,16,_ingestion_timestamp,TIMESTAMP,não,Timestamp de ingestão da tabela
+bronze_tc,municipio,17,_source,STRING,não,Origem da tabela
+bronze_tc,uf,1,ano,INT64,não,Ano de aplicação da avaliação estadual
+bronze_tc,uf,2,sigla_uf,STRING,não,Sigla da unidade da federação
+bronze_tc,uf,3,serie,STRING,não,Ano escolar
+bronze_tc,uf,4,rede,STRING,não,Rede de ensino avaliada para construção do resultado
+bronze_tc,uf,5,taxa_alfabetizacao,FLOAT64,não,"Percentual dos alunos avaliados no estado que foram considerados, mediante o resultado da avaliação estadual, como alfabetizados"
+bronze_tc,uf,6,media_portugues,FLOAT64,não,Média ponderada do estado na avaliação estadual na disciplina Língua Portuguesa equalizada com o SAEB
+bronze_tc,uf,7,proporcao_aluno_nivel_0,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 0
+bronze_tc,uf,8,proporcao_aluno_nivel_1,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 1
+bronze_tc,uf,9,proporcao_aluno_nivel_2,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 2
+bronze_tc,uf,10,proporcao_aluno_nivel_3,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 3
+bronze_tc,uf,11,proporcao_aluno_nivel_4,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 4
+bronze_tc,uf,12,proporcao_aluno_nivel_5,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 5
+bronze_tc,uf,13,proporcao_aluno_nivel_6,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 6
+bronze_tc,uf,14,proporcao_aluno_nivel_7,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 7
+bronze_tc,uf,15,proporcao_aluno_nivel_8,FLOAT64,não,Percentual de alunos avaliados na UF que foram alocados no nível de desempenho 8
+bronze_tc,uf,16,_ingestion_timestamp,TIMESTAMP,não,Timestamp de ingestão da tabela
+bronze_tc,uf,17,_source,STRING,não,Origem da tabela
+gold_tc,brasil_meta,1,ano,INT64,não,
+gold_tc,brasil_meta,2,local,STRING,não,
+gold_tc,brasil_meta,3,serie,STRING,não,
+gold_tc,brasil_meta,4,rede,STRING,não,
+gold_tc,brasil_meta,5,taxa_alfabetizacao,FLOAT64,não,
+gold_tc,brasil_meta,6,percentual_participacao,FLOAT64,não,
+gold_tc,brasil_meta,7,meta_alfabetizacao,FLOAT64,não,
+gold_tc,brasil_meta,8,distancia_meta,FLOAT64,não,
+gold_tc,brasil_meta,9,status_meta,STRING,não,
+gold_tc,brasil_meta,10,motivo_sem_meta,STRING,não,
+gold_tc,brasil_meta,11,_gold_timestamp,TIMESTAMP,não,
+gold_tc,evolucao_municipio,1,id_municipio,STRING,não,
+gold_tc,evolucao_municipio,2,cod_uf,STRING,não,
+gold_tc,evolucao_municipio,3,sigla_uf,STRING,não,
+gold_tc,evolucao_municipio,4,serie,STRING,não,
+gold_tc,evolucao_municipio,5,rede,STRING,não,
+gold_tc,evolucao_municipio,6,rede_descricao,STRING,não,
+gold_tc,evolucao_municipio,7,taxa_2023,FLOAT64,não,
+gold_tc,evolucao_municipio,8,taxa_2024,FLOAT64,não,
+gold_tc,evolucao_municipio,9,variacao_pp,FLOAT64,não,
+gold_tc,evolucao_municipio,10,tendencia,STRING,não,
+gold_tc,evolucao_municipio,11,_gold_timestamp,TIMESTAMP,não,
+gold_tc,indicador_por_origem,1,origem,STRING,não,
+gold_tc,indicador_por_origem,2,ano,INT64,não,
+gold_tc,indicador_por_origem,3,id_municipio,STRING,não,
+gold_tc,indicador_por_origem,4,cod_uf,STRING,não,
+gold_tc,indicador_por_origem,5,sigla_uf,STRING,não,
+gold_tc,indicador_por_origem,6,serie,STRING,não,
+gold_tc,indicador_por_origem,7,rede,STRING,não,
+gold_tc,indicador_por_origem,8,taxa_alfabetizacao,FLOAT64,não,
+gold_tc,indicador_por_origem,9,n_eventos,INT64,não,
+gold_tc,indicador_por_origem,10,n_avaliados,INT64,não,
+gold_tc,indicador_por_origem,11,metodo,STRING,não,
+gold_tc,indicador_por_origem,12,_gold_timestamp,TIMESTAMP,não,
+gold_tc,municipio_meta,1,ano,INT64,não,
+gold_tc,municipio_meta,2,id_municipio,STRING,não,
+gold_tc,municipio_meta,3,cod_uf,STRING,não,
+gold_tc,municipio_meta,4,sigla_uf,STRING,não,
+gold_tc,municipio_meta,5,serie,STRING,não,
+gold_tc,municipio_meta,6,serie_descricao,STRING,não,
+gold_tc,municipio_meta,7,rede,STRING,não,
+gold_tc,municipio_meta,8,rede_descricao,STRING,não,
+gold_tc,municipio_meta,9,taxa_alfabetizacao,FLOAT64,não,
+gold_tc,municipio_meta,10,meta_alfabetizacao,FLOAT64,não,
+gold_tc,municipio_meta,11,distancia_meta,FLOAT64,não,
+gold_tc,municipio_meta,12,status_meta,STRING,não,
+gold_tc,municipio_meta,13,motivo_sem_meta,STRING,não,
+gold_tc,municipio_meta,14,media_portugues,FLOAT64,não,
+gold_tc,municipio_meta,15,_gold_timestamp,TIMESTAMP,não,
+gold_tc,uf_meta,1,ano,INT64,não,
+gold_tc,uf_meta,2,cod_uf,STRING,não,
+gold_tc,uf_meta,3,sigla_uf,STRING,não,
+gold_tc,uf_meta,4,serie,STRING,não,
+gold_tc,uf_meta,5,serie_descricao,STRING,não,
+gold_tc,uf_meta,6,rede,STRING,não,
+gold_tc,uf_meta,7,rede_descricao,STRING,não,
+gold_tc,uf_meta,8,taxa_alfabetizacao,FLOAT64,não,
+gold_tc,uf_meta,9,meta_alfabetizacao,FLOAT64,não,
+gold_tc,uf_meta,10,distancia_meta,FLOAT64,não,
+gold_tc,uf_meta,11,status_meta,STRING,não,
+gold_tc,uf_meta,12,motivo_sem_meta,STRING,não,
+gold_tc,uf_meta,13,media_portugues,FLOAT64,não,
+gold_tc,uf_meta,14,_gold_timestamp,TIMESTAMP,não,
+gold_tc,validacao_cruzada,1,nivel,STRING,não,
+gold_tc,validacao_cruzada,2,ano,INT64,não,
+gold_tc,validacao_cruzada,3,local,STRING,não,
+gold_tc,validacao_cruzada,4,rede,STRING,não,
+gold_tc,validacao_cruzada,5,taxa_oficial,FLOAT64,não,
+gold_tc,validacao_cruzada,6,taxa_recalculada,FLOAT64,não,
+gold_tc,validacao_cruzada,7,diferenca_pp,FLOAT64,não,
+gold_tc,validacao_cruzada,8,taxa_sem_peso,FLOAT64,não,
+gold_tc,validacao_cruzada,9,taxa_todos_registros,FLOAT64,não,
+gold_tc,validacao_cruzada,10,n_avaliados,INT64,não,
+gold_tc,validacao_cruzada,11,n_registros,INT64,não,
+gold_tc,validacao_cruzada,12,taxa_na_tabela_meta,FLOAT64,não,
+gold_tc,validacao_cruzada,13,_gold_timestamp,TIMESTAMP,não,
+ops_tc,dq_results,1,execucao_id,STRING,sim,
+ops_tc,dq_results,2,executado_em,TIMESTAMP,sim,
+ops_tc,dq_results,3,camada,STRING,não,
+ops_tc,dq_results,4,tabela,STRING,não,
+ops_tc,dq_results,5,regra_id,STRING,não,
+ops_tc,dq_results,6,descricao,STRING,não,
+ops_tc,dq_results,7,severidade,STRING,não,
+ops_tc,dq_results,8,valor_medido,FLOAT64,não,
+ops_tc,dq_results,9,limiar,STRING,não,
+ops_tc,dq_results,10,status,STRING,não,
+ops_tc,eventos_rejeitados,1,id_evento,STRING,não,
+ops_tc,eventos_rejeitados,2,horario_recebimento,TIMESTAMP,não,
+ops_tc,eventos_rejeitados,3,motivo_rejeicao,STRING,não,
+ops_tc,eventos_rejeitados,4,mensagem_bruta,STRING,não,
+silver_tc,alunos,1,ano,INT64,não,
+silver_tc,alunos,2,id_municipio,STRING,não,
+silver_tc,alunos,3,cod_uf,STRING,não,
+silver_tc,alunos,4,sigla_uf,STRING,não,
+silver_tc,alunos,5,id_escola,STRING,não,
+silver_tc,alunos,6,id_aluno,STRING,não,
+silver_tc,alunos,7,caderno,STRING,não,
+silver_tc,alunos,8,serie,STRING,não,
+silver_tc,alunos,9,serie_descricao,STRING,não,
+silver_tc,alunos,10,rede,STRING,não,
+silver_tc,alunos,11,rede_descricao,STRING,não,
+silver_tc,alunos,12,presenca,STRING,não,
+silver_tc,alunos,13,presenca_descricao,STRING,não,
+silver_tc,alunos,14,preenchimento_caderno,STRING,não,
+silver_tc,alunos,15,preenchimento_caderno_descricao,STRING,não,
+silver_tc,alunos,16,alfabetizado,STRING,não,
+silver_tc,alunos,17,alfabetizado_descricao,STRING,não,
+silver_tc,alunos,18,avaliado,BOOL,não,
+silver_tc,alunos,19,proficiencia,FLOAT64,não,
+silver_tc,alunos,20,peso_aluno,FLOAT64,não,
+silver_tc,alunos,21,_ingestion_timestamp,TIMESTAMP,não,
+silver_tc,alunos,22,_source,STRING,não,
+silver_tc,alunos_eventos,1,id_evento,STRING,não,
+silver_tc,alunos_eventos,2,origem,STRING,não,
+silver_tc,alunos_eventos,3,horario_producao,TIMESTAMP,não,
+silver_tc,alunos_eventos,4,horario_recebimento,TIMESTAMP,não,
+silver_tc,alunos_eventos,5,latencia_segundos,FLOAT64,não,
+silver_tc,alunos_eventos,6,ano,INT64,não,
+silver_tc,alunos_eventos,7,id_municipio,STRING,não,
+silver_tc,alunos_eventos,8,cod_uf,STRING,não,
+silver_tc,alunos_eventos,9,sigla_uf,STRING,não,
+silver_tc,alunos_eventos,10,id_escola,STRING,não,
+silver_tc,alunos_eventos,11,id_aluno,STRING,não,
+silver_tc,alunos_eventos,12,caderno,STRING,não,
+silver_tc,alunos_eventos,13,serie,STRING,não,
+silver_tc,alunos_eventos,14,serie_descricao,STRING,não,
+silver_tc,alunos_eventos,15,rede,STRING,não,
+silver_tc,alunos_eventos,16,rede_descricao,STRING,não,
+silver_tc,alunos_eventos,17,presenca,STRING,não,
+silver_tc,alunos_eventos,18,presenca_descricao,STRING,não,
+silver_tc,alunos_eventos,19,preenchimento_caderno,STRING,não,
+silver_tc,alunos_eventos,20,preenchimento_caderno_descricao,STRING,não,
+silver_tc,alunos_eventos,21,alfabetizado,STRING,não,
+silver_tc,alunos_eventos,22,alfabetizado_descricao,STRING,não,
+silver_tc,alunos_eventos,23,avaliado,BOOL,não,
+silver_tc,alunos_eventos,24,proficiencia,FLOAT64,não,
+silver_tc,alunos_eventos,25,peso_aluno,FLOAT64,não,
+silver_tc,de_para_rede_meta,1,rede_texto,STRING,não,
+silver_tc,de_para_rede_meta,2,rede,STRING,não,
+silver_tc,de_para_uf,1,cod_uf,STRING,não,
+silver_tc,de_para_uf,2,sigla_uf,STRING,não,
+silver_tc,meta_brasil,1,ano_referencia,INT64,não,
+silver_tc,meta_brasil,2,local,STRING,não,
+silver_tc,meta_brasil,3,serie,STRING,não,
+silver_tc,meta_brasil,4,rede_texto,STRING,não,
+silver_tc,meta_brasil,5,rede,STRING,não,
+silver_tc,meta_brasil,6,taxa_referencia,FLOAT64,não,
+silver_tc,meta_brasil,7,percentual_participacao,FLOAT64,não,
+silver_tc,meta_brasil,8,ano_meta,INT64,não,
+silver_tc,meta_brasil,9,meta_alfabetizacao,FLOAT64,não,
+silver_tc,meta_brasil,10,_ingestion_timestamp,TIMESTAMP,não,
+silver_tc,meta_brasil,11,_source,STRING,não,
+silver_tc,meta_municipio,1,id_municipio,STRING,não,
+silver_tc,meta_municipio,2,cod_uf,STRING,não,
+silver_tc,meta_municipio,3,sigla_uf,STRING,não,
+silver_tc,meta_municipio,4,serie,STRING,não,
+silver_tc,meta_municipio,5,rede_texto,STRING,não,
+silver_tc,meta_municipio,6,rede,STRING,não,
+silver_tc,meta_municipio,7,ano_meta,INT64,não,
+silver_tc,meta_municipio,8,meta_alfabetizacao,FLOAT64,não,
+silver_tc,meta_municipio,9,_ingestion_timestamp,TIMESTAMP,não,
+silver_tc,meta_municipio,10,_source,STRING,não,
+silver_tc,meta_uf,1,ano_referencia,INT64,não,
+silver_tc,meta_uf,2,cod_uf,STRING,não,
+silver_tc,meta_uf,3,sigla_uf,STRING,não,
+silver_tc,meta_uf,4,serie,STRING,não,
+silver_tc,meta_uf,5,rede_texto,STRING,não,
+silver_tc,meta_uf,6,rede,STRING,não,
+silver_tc,meta_uf,7,taxa_referencia,FLOAT64,não,
+silver_tc,meta_uf,8,percentual_participacao,FLOAT64,não,
+silver_tc,meta_uf,9,ano_meta,INT64,não,
+silver_tc,meta_uf,10,meta_alfabetizacao,FLOAT64,não,
+silver_tc,meta_uf,11,_ingestion_timestamp,TIMESTAMP,não,
+silver_tc,meta_uf,12,_source,STRING,não,
+silver_tc,municipio,1,ano,INT64,não,
+silver_tc,municipio,2,id_municipio,STRING,não,
+silver_tc,municipio,3,cod_uf,STRING,não,
+silver_tc,municipio,4,sigla_uf,STRING,não,
+silver_tc,municipio,5,serie,STRING,não,
+silver_tc,municipio,6,serie_descricao,STRING,não,
+silver_tc,municipio,7,rede,STRING,não,
+silver_tc,municipio,8,rede_descricao,STRING,não,
+silver_tc,municipio,9,taxa_alfabetizacao,FLOAT64,não,
+silver_tc,municipio,10,media_portugues,FLOAT64,não,
+silver_tc,municipio,11,proporcao_aluno_nivel_0,FLOAT64,não,
+silver_tc,municipio,12,proporcao_aluno_nivel_1,FLOAT64,não,
+silver_tc,municipio,13,proporcao_aluno_nivel_2,FLOAT64,não,
+silver_tc,municipio,14,proporcao_aluno_nivel_3,FLOAT64,não,
+silver_tc,municipio,15,proporcao_aluno_nivel_4,FLOAT64,não,
+silver_tc,municipio,16,proporcao_aluno_nivel_5,FLOAT64,não,
+silver_tc,municipio,17,proporcao_aluno_nivel_6,FLOAT64,não,
+silver_tc,municipio,18,proporcao_aluno_nivel_7,FLOAT64,não,
+silver_tc,municipio,19,proporcao_aluno_nivel_8,FLOAT64,não,
+silver_tc,municipio,20,_ingestion_timestamp,TIMESTAMP,não,
+silver_tc,municipio,21,_source,STRING,não,
+silver_tc,uf,1,ano,INT64,não,
+silver_tc,uf,2,cod_uf,STRING,não,
+silver_tc,uf,3,sigla_uf,STRING,não,
+silver_tc,uf,4,serie,STRING,não,
+silver_tc,uf,5,serie_descricao,STRING,não,
+silver_tc,uf,6,rede,STRING,não,
+silver_tc,uf,7,rede_descricao,STRING,não,
+silver_tc,uf,8,taxa_alfabetizacao,FLOAT64,não,
+silver_tc,uf,9,media_portugues,FLOAT64,não,
+silver_tc,uf,10,proporcao_aluno_nivel_0,FLOAT64,não,
+silver_tc,uf,11,proporcao_aluno_nivel_1,FLOAT64,não,
+silver_tc,uf,12,proporcao_aluno_nivel_2,FLOAT64,não,
+silver_tc,uf,13,proporcao_aluno_nivel_3,FLOAT64,não,
+silver_tc,uf,14,proporcao_aluno_nivel_4,FLOAT64,não,
+silver_tc,uf,15,proporcao_aluno_nivel_5,FLOAT64,não,
+silver_tc,uf,16,proporcao_aluno_nivel_6,FLOAT64,não,
+silver_tc,uf,17,proporcao_aluno_nivel_7,FLOAT64,não,
+silver_tc,uf,18,proporcao_aluno_nivel_8,FLOAT64,não,
+silver_tc,uf,19,_ingestion_timestamp,TIMESTAMP,não,
+silver_tc,uf,20,_source,STRING,não,
