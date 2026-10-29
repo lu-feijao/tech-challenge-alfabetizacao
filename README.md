@@ -30,12 +30,12 @@ Este projeto constrói, em nuvem, um pipeline que integra as tabelas do Indicado
         └─► bronze_tc.eventos_alunos ─► silver_tc.alunos_eventos ─► gold_tc.indicador_por_origem
             (rejeitados: ops_tc.eventos_rejeitados)                 (coluna origem: oficial | simulado)
  Qualidade (ops_tc.dq_results)  implementado (seção 3.4)
- Observabilidade .............. em construção
+ Alerta de falha .............. implementado e testado (seção 7): log tc-pipeline (ERROR) → Cloud Monitoring → e-mail
+ Métricas de execução ......... tabela ops_tc.pipeline_runs criada e testada; Silver e Gold ainda não gravam nela (seção 7)
+ Orçamento .................... implementado (seção 7): Cloud Billing, R$ 50/mês, alertas por e-mail
 ```
 
-Todas as camadas são datasets dentro do mesmo projeto do Google Cloud, e cada camada lê a anterior.
-
-<!--AJUSTAR DEPOIS-->
+Todas as camadas são datasets dentro do mesmo projeto do Google Cloud, e cada camada lê a anterior. Diagrama detalhado, com cada tabela: [`docs/arquitetura.md`](docs/arquitetura.md) ([imagem](docs/arquitetura.png)).
 
 ## 3. Estrutura do repositório
 
@@ -47,8 +47,19 @@ Todas as camadas são datasets dentro do mesmo projeto do Google Cloud, e cada c
 | `quality/` | Regras de qualidade de dados (`regras.py`) e funções de execução e registro em `ops.dq_results` (`dq.py`) |
 | `streaming/` | Streaming: simulador (`producer.py`), consumidor em micro-lotes (`consumer.py`) e a validação dos eventos (`validacao.py`) |
 | `tests/` | Testes unitários da triagem de eventos (`python -m unittest discover -s tests -t .`) |
-| `ops/` | Reservada para as métricas de execução do pipeline (frente 4). Ainda sem código |
-| `docs/` | Documentação da frente de Silver/Gold (`frente3/`) e evidências de execução (`evidencias/`: Bronze, qualidade, falha demonstrada, streaming e FinOps) |
+| `ops/` | Reservada para o código de observabilidade da frente 4 (logger de `pipeline_runs`, teste do alerta, SQL de custo). Ainda sem código no repositório |
+| `docs/` | Documentação técnica, organizada por tema (detalhe abaixo) |
+
+Dentro de `docs/`:
+
+| Pasta ou arquivo | Conteúdo |
+|---|---|
+| `arquitetura.md` e `.png` | diagrama do que foi implementado, com cada tabela |
+| `numeros.md` | todo número citado no README e no vídeo, com a fonte de cada um |
+| `dados/` | perfil das tabelas da Bronze, mapa de joins e catálogo de dados com o DDL de cada tabela (`catalogo/`) |
+| `qualidade/` | catálogo das regras de qualidade (limiares e justificativas) e revisão contra as armadilhas do enunciado |
+| `finops/` | tabela de custo (medido e projetado) e medições de tamanho das tabelas |
+| `evidencias/` | evidências de execução: Bronze, resultados de qualidade (`dq_*.csv`), falha demonstrada, streaming, alerta de falha (`alerta/`) e orçamento (`finops/`) |
 
 Arquivos na raiz: `README.md`, `requirements.txt`, `.env.example` (modelo de configuração) e `.gitignore`.
 
@@ -140,7 +151,7 @@ Execução: `python silver/silver_transformacao.py` roda, em ordem, os arquivos 
 - **Metas em formato longo.** As 7 colunas de meta viram linhas. Na meta municipal as metas são idênticas nas linhas de 2023 e 2024 e são deduplicadas; nas metas de UF e Brasil a linha de 2025 traz valores arredondados, por isso cada linha guarda o seu ano de referência.
 - **UF dos municípios** derivada dos 2 primeiros dígitos do código IBGE.
 
-Detalhes: [ficha de perfil da Bronze](docs/frente3/ficha_perfil_bronze.md) e [mapa de joins](docs/frente3/mapa_joins.md).
+Detalhes: [ficha de perfil da Bronze](docs/dados/ficha_perfil_bronze.md) e [mapa de joins](docs/dados/mapa_joins.md).
 
 ### Custo medido
 
@@ -213,7 +224,7 @@ Para gerar de novo, depois da Gold: `python gold/exportar_gold.py`. O script lê
 
 ## 3.4 Qualidade de dados
 
-As regras ficam em [`quality/regras.py`](quality/regras.py) e o catálogo completo, com limiares e justificativas, em [`docs/frente3/regras_qualidade.md`](docs/frente3/regras_qualidade.md).
+As regras ficam em [`quality/regras.py`](quality/regras.py) e o catálogo completo, com limiares e justificativas, em [`docs/qualidade/regras_qualidade.md`](docs/qualidade/regras_qualidade.md).
 
 - **Bloqueantes** (41 na Silver, 7 delas dos eventos de streaming, e 10 na Gold, 4 delas da tabela com `origem`): carga completa da Bronze, chave única, nulo em chave, código sem tradução, faixas válidas, alinhamento de proficiência e peso, coerência dos status e **taxa de match de cada join** (municipio × meta municipal e uf × meta estadual, limiar de 95% justificado no catálogo). Se alguma reprova, o script termina com código 1 e a Gold não é publicada.
 - **Informativas** (6 na Silver e 4 na Gold): registram e seguem. Três reprovam de propósito com o dado atual: taxas de 2023 divergentes entre duas tabelas da fonte (R09), 18 cadernos fora da faixa (R10) e 25 UFs em vez de 27 (R11).
@@ -222,7 +233,7 @@ As regras ficam em [`quality/regras.py`](quality/regras.py) e o catálogo comple
 
 **Falha demonstrada:** `python silver/silver_transformacao.py --simular-falha` eleva o limiar de match da R04 para 99,9%. Na execução `silver_20261021_160213_34ac17` a R04 reprovou (97,32%), o resultado ficou gravado em `ops.dq_results`, o script terminou com código 1 e a Gold se recusou a rodar. Logs em [`docs/evidencias/falha_demonstrada/`](docs/evidencias/falha_demonstrada/).
 
-Revisão contra as armadilhas do enunciado: [`docs/frente3/checklist_armadilhas.md`](docs/frente3/checklist_armadilhas.md).
+Revisão contra as armadilhas do enunciado: [`docs/qualidade/checklist_armadilhas.md`](docs/qualidade/checklist_armadilhas.md).
 
 
 ## 3.5 Streaming — eventos em tempo quase real
@@ -390,13 +401,49 @@ Versões fixadas em `requirements.txt`.
 
 ## 7. Monitoramento e FinOps
 
-**Qualidade de dados:** ver a seção 3.4 (`ops_tc.dq_results`, falha demonstrada).
+### 7.1 O que é monitorado
+
+| O que o enunciado pede | Como está hoje | Onde ver |
+|---|---|---|
+| Resultado das validações, persistido | cada regra de cada execução vira uma linha em `ops_tc.dq_results`, que acumula: 248 resultados de 8 execuções (5 da Silver, 3 da Gold), entre eles a falha demonstrada | seção 3.4; `docs/evidencias/dq_*.csv` |
+| Alerta de erro | política **"Pipeline TC - falha"** no Cloud Monitoring: qualquer entrada com severidade ERROR no log `tc-pipeline` abre um alerta e envia e-mail ao canal da frente 4. Avisa de novo a cada 5 min enquanto aberto e fecha sozinho em 30 min | [`docs/evidencias/alerta/`](docs/evidencias/alerta/) |
+| Latência medida de fato | streaming: `latencia_segundos` = recebimento − produção, por evento (0,91 a 17,11 s); batch: duração de cada SQL impressa pelos scripts | seção 3.5; `bronze_tc.eventos_alunos` |
+| Volume processado | linhas e bytes de cada tabela no catálogo; bytes processados por SQL na saída dos scripts | [`docs/dados/catalogo/catalogo_dados.md`](docs/dados/catalogo/catalogo_dados.md) |
+| Métricas de execução persistidas (duração por etapa, linhas de entrada e saída, status) | tabela `ops_tc.pipeline_runs` (só acréscimo, particionada por dia, sem expiração) criada e testada com 4 linhas de teste (`etapa = 'teste_frente4'`). **Os scripts da Silver e da Gold ainda não gravam nela**: o logger da frente 4 não está no repositório | `ops_tc.pipeline_runs` |
+| Custo por etapa | view `ops_tc.vw_custo_por_etapa`, que soma os bytes faturados dos jobs por label `pipeline`/`camada`/`etapa`. Hoje só os jobs do catálogo têm label | `ops_tc.vw_custo_por_etapa` |
+
+**Teste do alerta (28/10/2026, horário de Brasília):** a falha simulada foi registrada às 20:20:29, o alerta abriu às 20:21:21 (52 s depois) e o e-mail chegou às 20:21, na execução `teste_20261028_232024_f5c54d`. Prints do alerta aberto e do e-mail em [`docs/evidencias/alerta/`](docs/evidencias/alerta/); registro das ações no GCP em [`docs/evidencias/alerta/registro_acoes_gcp.md`](docs/evidencias/alerta/registro_acoes_gcp.md).
+
+### 7.2 Em produção, quem descobre que o pipeline quebrou, e em quanto tempo?
+
+- **Falha registrada no log `tc-pipeline` com severidade ERROR:** o responsável pela frente 4 recebe o e-mail em cerca de **1 minuto** (medido: 52 s até o alerta abrir). O e-mail diz onde olhar (`pipeline_runs`, log `tc-pipeline` e `dq_results` pelo mesmo `execucao_id`).
+- **Regra bloqueante reprovada na Silver ou na Gold:** o script para com código 1, a camada seguinte não é publicada e o resultado fica em `dq_results`. Hoje quem descobre é **quem executou o script, na hora**, pelo terminal. Como os scripts ainda não gravam no log `tc-pipeline`, essa falha **não** gera e-mail. Ligar o logger da frente 4 à Silver e à Gold faz a mesma falha cair no alerta de 1 minuto.
+- **Sem execução:** como não há orquestrador, um pipeline que simplesmente não rodou não gera alerta. Um agendador com alerta de ausência fica para uma próxima etapa (seção 5).
+
+### 7.3 FinOps
+
+**Ambiente.** O projeto rodou no **sandbox do BigQuery** até 28/10/2026, sem cobrança. Desde então está numa conta de faturamento **free trial** (`billingEnabled: true`), e o uso medido fica dentro das franquias gratuitas: o custo real é **R$ 0,00**.
 
 **Orçamento com alerta (Cloud Billing).** Orçamento `TC Fase 02`: mensal, só para o projeto Tech Challenge, todos os serviços, R$ 50,00, com alerta por e-mail aos administradores de faturamento em 25%, 50%, 90% e 100% do gasto real. Os créditos promocionais do free trial **não** são descontados, para o alerta acompanhar o consumo real. Prints em [`docs/evidencias/finops/`](docs/evidencias/finops/).
 
-**Custo medido:** seção 3.2 (≈ 2,3 GB lidos por execução completa de Silver e Gold).
+**Quantidades medidas:**
+- leitura por execução completa de Silver e Gold: ≈ 2,3 GB (2,14 GiB), por dry run (seção 3.2);
+- armazenamento total: 1,74 GiB (catálogo);
+- uma carga completa da Bronze: 0,475 GiB;
+- consumo real de consultas de 17/10 a 26/10, durante o desenvolvimento: 418 consultas, 20,41 GiB faturados (`INFORMATION_SCHEMA.JOBS_BY_PROJECT`), o que daria US$ 0,22 a preço de tabela.
 
-*Métricas de execução, alerta de falha e tabela de custo projetado: em construção pela frente 4.*
+**Projeção para produção** (mesmo desenho, com faturamento; premissas: batch diário, streaming de 1 evento por segundo, 1 alerta). Tabela completa, com SKUs, franquias e os dois cenários: [`docs/finops/tabela_custo.md`](docs/finops/tabela_custo.md).
+
+| Serviço | Unidade | Quantidade | Preço unitário (São Paulo) | Custo mensal projetado |
+|---|---|---|---|---|
+| BigQuery: consultas | TiB processado | 30 × 1,67 GiB = 50 GiB (estimado a partir do medido, supondo a Bronze particionada e a Silver lendo só a última carga) | US$ 11,25 / TiB | US$ 0,55 |
+| BigQuery: armazenamento | GiB-mês | 1,74 GiB, + 0,475 GiB por carga (medido) | US$ 0,023 / GiB-mês | US$ 0,04 |
+| Pub/Sub | TiB (publicação + leitura) | 4,83 GiB (premissa de 1 evento/s; o teste teve 14 mensagens) | US$ 40 / TiB | US$ 0,19 |
+| BigQuery: Storage Write API (streaming) | GiB | 2,47 GiB (premissa) | US$ 0,045 / GiB | US$ 0,11 |
+| Cloud Logging e Monitoring | GiB / política | < 1 MiB, 1 política | franquia | US$ 0,00 |
+| **Total** | | | | **≈ US$ 0,89** sem franquia gratuita; **US$ 0** com ela |
+
+Com o desenho **atual** (Bronze sem partição, a Silver relendo a Bronze inteira) e uma carga completa por dia, a leitura cresce a cada carga: no 6º mês seriam cerca de US$ 26,62 só em consultas. Como a fonte oficial é atualizada **uma vez por ano**, recarregar todo dia não é a cadência pretendida: a recomendação é recarregar só quando a fonte mudar, e particionar a Bronze se as recargas ficarem frequentes. Recomendações com o ganho medido de cada uma (ler só as colunas necessárias: −81%; filtrar a partição da Silver: −45%) estão na seção 5 da tabela de custo.
 
 ## 8. Aplicação em IA
 
@@ -410,7 +457,8 @@ A Gold foi desenhada para ser reaproveitada na Fase 3 e está guardada em Parque
 
 ## 9. Limitações conhecidas
 
-- **Dado simulado no streaming:** 2 rodadas de 7 mensagens de 1 município, executadas com um notebook e não com os scripts de `streaming/`; para demonstrar o fluxo; não serve para análise (seção 3.5).
+- **Dado simulado no streaming:** 2 rodadas de 7 mensagens de 1 município, executadas com um notebook e não com os scripts de `streaming/`; servem para demonstrar o fluxo, não para análise (seção 3.5).
+- **Métricas de execução:** `ops_tc.pipeline_runs` e o alerta existem e foram testados, mas a Silver e a Gold ainda não gravam suas execuções nem escrevem no log do alerta (seção 7).
 - **Lacunas da fonte:** `uf` não traz DF nem RR; `municipio` não traz RR e tem 5.550 municípios em vez de 5.570; as proporções por nível não existem em 2023; o número nacional de 2023 da tabela de meta (55,9) diverge do recalculado a partir dos microdados (57,46), sem causa confirmada (seção 3.3).
 - **Bronze sem partição:** a leitura da Silver cresce a cada nova carga (seção 6).
 - **Execução manual:** sem orquestrador; as etapas são comandos executados em sequência (seção 4).

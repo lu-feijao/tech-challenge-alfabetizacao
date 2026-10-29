@@ -2,7 +2,7 @@
 
 Versão em imagem: [`arquitetura.png`](arquitetura.png).
 
-O diagrama mostra **só o que existe no projeto em 28/10/2026**, conferido pelo catálogo (`docs/catalogo/catalogo_dados.md`). Linhas tracejadas são fluxos de controle ou observabilidade. A Silver e a Gold gravam em `pipeline_runs`; a Bronze e o streaming ainda não usam o logger. Os itens marcados como *pendente* ou *a confirmar* ainda não foram verificados no projeto.
+O diagrama mostra **só o que existe no projeto em 28/10/2026**, conferido pelo catálogo (`docs/dados/catalogo/catalogo_dados.md`). Linhas tracejadas são fluxos de controle ou observabilidade. **Atenção (29/10):** as setas "cada etapa (logger)" da Silver e da Gold para `pipeline_runs` são o desenho pretendido. Em 29/10 a tabela, a política de alerta e o canal de e-mail existem e foram testados (`pipeline_runs` tem 4 linhas de teste), mas os scripts da Silver e da Gold ainda não gravam nela. A Bronze e o streaming também não usam o logger.
 
 ```mermaid
 flowchart LR
@@ -57,4 +57,4 @@ flowchart LR
 | `gold_tc` | 6 | 58.638 | 5,41 MiB |
 | `ops_tc` | 3 tabelas e 1 view (`vw_custo_por_etapa`); `pipeline_runs` tem só as 4 linhas dos testes de 26/10 e 28/10 | 192 | 31,31 KiB |
 
-**Região:** `southamerica-east1`. **Ambiente:** faturamento ativo (conferido em 28/10/2026; antes, BigQuery Sandbox). As tabelas criadas no Sandbox mantêm a data de expiração: 15/12 (Bronze) e 22/12 (Silver e Gold).
+**Região:** `southamerica-east1`. **Ambiente:** faturamento ativo (conferido em 28/10/2026; antes, BigQuery Sandbox). As tabelas criadas no Sandbox mantêm a data de expiração: 15/12 (Bronze) e 22/12 (`eventos_alunos` e `eventos_rejeitados`). A Silver e a Gold foram recriadas em 28/10, depois que os datasets perderam a expiração padrão, e não expiram mais.

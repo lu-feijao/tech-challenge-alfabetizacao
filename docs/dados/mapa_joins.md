@@ -1,6 +1,6 @@
 # Mapa de joins (Frente 3, passo 2) — rascunho para revisão
 
-Base: `docs/frente3/ficha_perfil_bronze.md`. Todas as tabelas são lidas na última rodada de carga. "Medido" = número obtido em consulta; "esperado" = calculado a partir dos perfis, ainda não medido com o join.
+Base: `docs/dados/ficha_perfil_bronze.md`. Todas as tabelas são lidas na última rodada de carga. "Medido" = número obtido em consulta; "esperado" = calculado a partir dos perfis, ainda não medido com o join.
 
 ## Decisões que os joins exigem
 
