@@ -125,7 +125,7 @@ Execução: `python silver/silver_transformacao.py` roda, em ordem, os arquivos 
 | `meta_municipio` | 37.464 | id_municipio + rede + ano_meta | Metas em formato longo (uma linha por ano de meta, 2024 a 2030); rede texto → código |
 | `meta_uf` | 567 | ano_referencia + sigla_uf + rede + ano_meta | Formato longo, guardando o ano de referência de cada linha da fonte |
 | `meta_brasil` | 21 | ano_referencia + rede + ano_meta | Formato longo, como `meta_uf` |
-| `alunos_eventos` | 5 (teste de 23/10) | id_evento | Eventos de streaming deduplicados por `id_evento`, com `origem` e latência (etapa opcional: só roda se `bronze_tc.eventos_alunos` existir) |
+| `alunos_eventos` | 10 (testes de 23/10 e 28/10) | id_evento | Eventos de streaming deduplicados por `id_evento`, com `origem` e latência (etapa opcional: só roda se `bronze_tc.eventos_alunos` existir) |
 | `de_para_uf` | 27 | cod_uf | Código IBGE da UF → sigla |
 | `de_para_rede_meta` | 2 | rede_texto | `Municipal` → `3`; `Pública` → `5` |
 
@@ -208,7 +208,7 @@ Em 2024, 99,5% dos municípios (rede municipal) ficam a até 0,5 p.p. da taxa of
 
 As tabelas do BigQuery podem expirar: os datasets foram criados no sandbox, com expiração padrão de 60 dias, que continua valendo depois da ativação do faturamento até ser removida. Por isso a Gold fica guardada também em [`gold/export/`](gold/export/): um arquivo Parquet por tabela e um `manifesto.csv` com as linhas no BigQuery, as linhas exportadas, a última modificação da tabela e o horário da cópia.
 
-Para gerar de novo, depois da Gold: `python gold/exportar_gold.py`. O script lê as tabelas pela API de leitura (sem consulta SQL, então sem bytes cobrados) e termina com código 1 se alguma contagem divergir. Cópia atual: 28/10/2026, das tabelas publicadas em 23/10/2026 (6 tabelas, 58.638 linhas, cerca de 1 MB).
+Para gerar de novo, depois da Gold: `python gold/exportar_gold.py`. O script lê as tabelas pela API de leitura (sem consulta SQL, então sem bytes cobrados) e termina com código 1 se alguma contagem divergir. Cópia atual: das tabelas publicadas em 28/10/2026 (execução `gold_20261029_004410_1ce122`; 6 tabelas, 58.638 linhas, cerca de 1 MB).
 
 
 ## 3.4 Qualidade de dados
@@ -243,23 +243,23 @@ bronze_tc.eventos_alunos ─► silver_tc.alunos_eventos (dedup por id_evento) �
 - **Silver** (`silver/sql/08_alunos_eventos.sql`): fica a linha recebida primeiro de cada `id_evento`. Regras E01 a E08 (seção 3.4): chave única, sem nulos, `origem` sempre `simulado`, **latência maior que zero**, `alfabetizado` coerente com 743, faixas e match do município.
 - **Gold** (`gold/sql/06_indicador_por_origem.sql`): uma tabela com a taxa por município e a coluna `origem`. O número do simulador **não é indicador oficial**: as duas origens só dividem a tabela porque `origem` as separa, e nenhuma consulta deve somá-las ou compará-las sem filtrar. Os eventos usam o ano 2026, que não existe no indicador oficial (regra G07).
 
-### Batch × streaming (números do teste de 23/10/2026)
+### Batch × streaming (números medidos em 23/10 e 28/10/2026)
 
 | | Batch (Bronze) | Streaming (eventos) |
 |---|---|---|
-| Latência | intervalo entre a atualização da fonte e a próxima execução manual do script (horas ou dias; não é medida como latência) | **0,91 a 17,11 s** por evento (mediana 14,45 s, média 12,10 s), medida como recebimento menos produção |
+| Latência | intervalo entre a atualização da fonte e a próxima execução manual do script (horas ou dias; não é medida como latência) | **0,91 a 17,11 s** por evento, medida como recebimento menos produção. 23/10: mediana 14,45 s, média 12,10 s; 28/10: 0,97 a 14,81 s, mediana 2,81 s, média 4,75 s |
 | Frequência | carga completa sob demanda (2 rodadas até agora) | micro-lotes de até 10 mensagens, um load job por lote |
 | Garantia | contagem conferida (origem = baixada = acrescentada) e Silver usa só a última ingestão | entrega **pelo menos uma vez**; dedup por `id_evento` no consumer e na Silver; ack só depois de gravar |
 | Dado ruim | regra bloqueante interrompe a Silver e a Gold | evento inválido vai para rejeitados, sem derrubar o consumer |
 
-A latência de 17 s não vem do Pub/Sub: o consumer é sequencial e cada lote espera um load job do BigQuery (alguns segundos). A inserção por streaming do BigQuery daria menos de 1 s, mas não foi usada: o teste rodou quando o projeto ainda estava no sandbox, que a bloqueia. O faturamento foi ativado em 28/10/2026 e ela passou a ser possível, mas o consumer segue com load job, que é gratuito. Os eventos seguintes esperam o consumer terminar a gravação anterior.
+A latência de até 17 s não vem do Pub/Sub: o consumer é sequencial e cada lote espera um load job do BigQuery (alguns segundos). Em 28/10 os lotes foram menores e mais frequentes, e a mediana caiu de 14,45 s para 2,81 s; o único evento lento (14,81 s) esperou a gravação do lote anterior. A inserção por streaming do BigQuery daria menos de 1 s, mas não foi usada: o teste rodou quando o projeto ainda estava no sandbox, que a bloqueia. O faturamento foi ativado em 28/10/2026 e ela passou a ser possível, mas o consumer segue com load job, que é gratuito. Os eventos seguintes esperam o consumer terminar a gravação anterior.
 
-Evidências, jobs e contagens: [`docs/evidencias/streaming/`](docs/evidencias/streaming/teste_colab_2026-10-23.md).
+Evidências, jobs, contagens e prints: [`docs/evidencias/streaming/`](docs/evidencias/streaming/), com uma página por rodada ([23/10](docs/evidencias/streaming/teste_colab_2026-10-23.md) e [28/10](docs/evidencias/streaming/teste_notebook_2026-10-28.md)).
 
 ### Limitações do streaming
 
-- O dado é **simulado** (7 mensagens, 1 município) e serve para demonstrar o fluxo, não para análise.
-- A evidência de 23/10 vem do notebook equivalente executado no Google Colab. Os scripts de `streaming/` têm a mesma lógica, testada por testes unitários (`tests/`), mas ainda não foram executados contra o Pub/Sub.
+- O dado é **simulado** (2 rodadas de 7 mensagens, 1 município) e serve para demonstrar o fluxo, não para análise.
+- As duas rodadas foram executadas com o notebook [`teste_streaming_unico.ipynb`](docs/evidencias/streaming/teste_streaming_unico.ipynb), guardado junto das evidências. Os scripts de `streaming/` têm a mesma lógica, testada por testes unitários (`tests/`), mas ainda não foram executados contra o Pub/Sub.
 - A deduplicação em memória do consumer zera quando ele reinicia; a Silver deduplica de novo por `id_evento`.
 - A etapa é opcional: sem `bronze_tc.eventos_alunos`, a Silver e a Gold pulam os eventos e o restante do pipeline roda normalmente.
 
@@ -410,7 +410,7 @@ A Gold foi desenhada para ser reaproveitada na Fase 3 e está guardada em Parque
 
 ## 9. Limitações conhecidas
 
-- **Dado simulado no streaming:** 7 mensagens de 1 município, para demonstrar o fluxo; não serve para análise (seção 3.5).
+- **Dado simulado no streaming:** 2 rodadas de 7 mensagens de 1 município, executadas com um notebook e não com os scripts de `streaming/`; para demonstrar o fluxo; não serve para análise (seção 3.5).
 - **Lacunas da fonte:** `uf` não traz DF nem RR; `municipio` não traz RR e tem 5.550 municípios em vez de 5.570; as proporções por nível não existem em 2023; o número nacional de 2023 da tabela de meta (55,9) diverge do recalculado a partir dos microdados (57,46), sem causa confirmada (seção 3.3).
 - **Bronze sem partição:** a leitura da Silver cresce a cada nova carga (seção 6).
 - **Execução manual:** sem orquestrador; as etapas são comandos executados em sequência (seção 4).
