@@ -2,9 +2,9 @@
 
 **Projeto:** `project-ce782257-1c9c-4b6f-87a` · **Região:** `southamerica-east1` · **Gerado em:** 24/10/2026 22:35
 
-Gerado por `ops/gerar_catalogo.py` a partir de `ops/sql/catalogo/catalogo_tabelas.sql`. A consulta só lê o INFORMATION_SCHEMA.
+Gerado pela frente 4 com uma consulta de leitura ao `INFORMATION_SCHEMA` e às metatabelas `__TABLES__` dos 4 datasets (os scripts de geração rodaram fora do repositório; este arquivo e os CSV/JSON ao lado são o resultado). Para remedir linhas e bytes, use `python ops/medir_tabelas.py`.
 
-O **dono provável** e a **finalidade** de cada tabela foram inferidos pela Frente 4 a partir do nome e das colunas. O dono de cada tabela deve confirmar ou corrigir esses campos em `INFO`, dentro de `ops/gerar_catalogo.py`.
+O **dono provável** e a **finalidade** de cada tabela foram inferidos pela Frente 4 a partir do nome e das colunas. O dono de cada tabela deve confirmar ou corrigir esses campos neste arquivo.
 
 ## Resumo por dataset
 

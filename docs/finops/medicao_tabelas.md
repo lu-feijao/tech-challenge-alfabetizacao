@@ -5,7 +5,7 @@
 
 ## Atualização de 24/10/2026: 26 tabelas
 
-**Como foi medido:** por consulta de leitura em `INFORMATION_SCHEMA` e nas metatabelas `__TABLES__`, com a SQL em `ops/sql/catalogo/catalogo_tabelas.sql` (leu 40 MB). O detalhe por tabela está em `docs/dados/catalogo/catalogo_dados.md` e em `docs/finops/medicoes_dry_run.csv`.
+**Como foi medido:** por consulta de leitura em `INFORMATION_SCHEMA` e nas metatabelas `__TABLES__`, (consulta de catálogo da frente 4, executada fora do repositório; leu 40 MB). O detalhe por tabela está em `docs/dados/catalogo/catalogo_dados.md` e em `docs/finops/medicoes_dry_run.csv`.
 
 | Dataset | Tabelas | Linhas | Bytes lógicos |
 |---|---:|---:|---:|
@@ -150,9 +150,9 @@ Essas são as duas alavancas de custo que já dá para mostrar com número real:
    - O armazenamento total é de cerca de 1,74 GiB, abaixo dos 10 GiB gratuitos por mês.
    - Uma varredura completa de `bronze_tc.alunos` lê cerca de 0,94 GiB. O 1 TiB gratuito de consultas por mês cobre por volta de **1.090 varreduras completas**.
 
-## Apêndice: script de medição para o repositório (`ops/medir_tabelas.py`)
+## Apêndice: script de medição
 
-O script repete esta medição de forma reproduzível. Ele usa só chamadas de metadados e dry run, então não executa consultas e não tem custo.
+Versão inicial do script de medição. A versão do repositório, que lê o projeto e os datasets do `.env` e mede as 4 camadas, é [`ops/medir_tabelas.py`](../../ops/medir_tabelas.py). O script repete esta medição de forma reproduzível. Ele usa só chamadas de metadados e dry run, então não executa consultas e não tem custo.
 
 ```python
 """Mede linhas e bytes (dry run) das tabelas das camadas. Não executa consultas."""
