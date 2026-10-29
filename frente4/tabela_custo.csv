@@ -1,0 +1,16 @@
+cenario,servico,unidade,quantidade_mes,origem_quantidade,preco_unitario_usd,franquia_mensal,custo_mensal_sem_franquia_usd,custo_mensal_com_franquia_usd
+atual,todos,-,-,faturamento ativo desde 28/10/2026 (free trial); orcamento TC Fase 02 registra R$ 0.00 de R$ 50.00,0,-,0.00,0.00
+A_mes1,BigQuery consultas,TiB,0.2785,estimado a partir do medido (285 GiB = 30 execucoes; Silver le a Bronze inteira; regras + Gold 1.19 GiB),11.25,1 TiB,3.13,0.00
+A_mes1,BigQuery armazenamento logico ativo,GiB-mes,16.0,medido (1.74 GiB) + 30 cargas de 0.475 GiB,0.023,10 GiB,0.37,0.14
+A_mes1,Pub/Sub,TiB,0.0047,estimado (1 evento/s; 1 KB; publicacao + leitura),40,10 GiB,0.19,0.00
+A_mes6,BigQuery consultas,TiB,2.3659,estimado a partir do medido (2423 GiB),11.25,1 TiB,26.62,15.37
+A_mes6,BigQuery armazenamento logico ativo,GiB-mes,87.2,medido + 180 cargas de 0.475 GiB,0.023,10 GiB,2.01,1.78
+A_mes6,Pub/Sub,TiB,0.0047,estimado,40,10 GiB,0.19,0.00
+B,BigQuery consultas,TiB,0.0489,estimado a partir do medido (30 x 1.67 GiB: 1 carga + regras + Gold),11.25,1 TiB,0.55,0.00
+B,BigQuery armazenamento logico ativo,GiB-mes,1.74,medido em 24/10/2026,0.023,10 GiB,0.04,0.00
+B,Pub/Sub,TiB,0.0047,estimado,40,10 GiB,0.19,0.00
+todos,Cloud Logging,GiB,0.001,estimado (2 entradas de ~1 KB por etapa),0.50,50 GiB por projeto,0.00,0.00
+todos,Cloud Monitoring alerta,referencia de metrica,1,1 politica de alerta de log,0.35 (a partir de 01/09/2027),gratuito ate 31/08/2027,0.00,0.00
+A_mes1,BigQuery Storage Write API (streaming em producao),GiB,2.47,estimado (1 evento/s; 1 KB; load job por micro-lote passaria da cota de 1500 por tabela por dia),0.045,2 TiB,0.11,0.00
+A_mes6,BigQuery Storage Write API (streaming em producao),GiB,2.47,estimado,0.045,2 TiB,0.11,0.00
+B,BigQuery Storage Write API (streaming em producao),GiB,2.47,estimado,0.045,2 TiB,0.11,0.00
