@@ -18,7 +18,7 @@ Todo número que aparece no README ou no vídeo precisa estar aqui, com a fonte.
 
 | # | Número | Valor | Fonte | Medido em |
 |---|---|---|---|---|
-| 6 | Resultados de regras gravados | **248** em `ops_tc.dq_results`, de 8 execuções (5 da Silver, 3 da Gold) | `SELECT ... GROUP BY execucao_id, severidade, status` | ✅ 29/10 |
+| 6 | Resultados de regras gravados | **478** em `ops_tc.dq_results`, de 15 execuções (9 da Silver, 6 da Gold) | `SELECT ... GROUP BY execucao_id, severidade, status` | ✅ 02/11 |
 | 7 | Resultados bloqueantes aprovados | **209** | idem | ✅ 29/10 |
 | 8 | Falha bloqueante registrada (pipeline parou) | **1**: R04 na Silver (97,32% contra o limiar de 99,9% do `--simular-falha`), execução `silver_20261021_160213_34ac17`, 21/10/2026 às 13:02 | idem | ✅ 29/10 |
 | 9 | Resultados informativos reprovados (só avisam) | **15**: R09, R10 e R11 em cada uma das 5 execuções da Silver | idem | ✅ 29/10 |
@@ -52,6 +52,6 @@ Todo número que aparece no README ou no vídeo precisa estar aqui, com a fonte.
 
 | # | Número | Valor | Fonte | Medido em |
 |---|---|---|---|---|
-| 22 | Execuções registradas em `ops_tc.pipeline_runs` | **3 execuções reais em 29/10** (Silver com `--simular-falha`: 11 etapas, 1 falha; Silver: 10 etapas; Gold: 8 etapas), além das 4 linhas de teste de 26/10 e 28/10 (`etapa='teste_frente4'`) | `SELECT * FROM ops_tc.pipeline_runs` | ✅ 29/10 |
+| 22 | Execuções registradas em `ops_tc.pipeline_runs` | **7 execuções reais em 29/10, com 65 etapas** (Silver com `--simular-falha`: 11 etapas, 1 falha; cada Silver normal: 10 etapas; cada Gold: 8 etapas, ou seja, 18 por rodada completa), além das 4 linhas de teste de 26/10 e 28/10 (`etapa='teste_frente4'`) | `SELECT * FROM ops_tc.pipeline_runs` | ✅ 02/11 |
 | 23 | Tempo entre a falha e o alerta | **15 s** com falha real da Silver (29/10: falha 17:35:40, alerta 17:35:55, e-mail 17:35); 52 s no teste de 28/10 | `pipeline_runs`, Cloud Monitoring; prints e detalhes em `docs/evidencias/alerta/` | ✅ 29/10 |
 | 24 | Duração de uma execução completa do batch (Silver + Gold) | **≈ 85 s** (Silver 62,2 s; Gold 23,1 s); ≈ 2,53 GB faturados (Silver 2,166; Gold 0,368) | `SELECT SUM(duracao_seg), SUM(bytes_faturados) ... GROUP BY execucao_id` | ✅ 29/10 |

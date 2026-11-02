@@ -413,7 +413,7 @@ Versões fixadas em `requirements.txt`.
 
 | O que o enunciado pede | Como está hoje | Onde ver |
 |---|---|---|
-| Resultado das validações, persistido | cada regra de cada execução vira uma linha em `ops_tc.dq_results`, que acumula: 248 resultados de 8 execuções (5 da Silver, 3 da Gold), entre eles a falha demonstrada | seção 3.4; `docs/evidencias/dq_*.csv` |
+| Resultado das validações, persistido | cada regra de cada execução vira uma linha em `ops_tc.dq_results`, que acumula: 478 resultados de 15 execuções (9 da Silver, 6 da Gold), entre eles a falha demonstrada | seção 3.4; `docs/evidencias/dq_*.csv` |
 | Alerta de erro | política **"Pipeline TC - falha"** no Cloud Monitoring: qualquer entrada com severidade ERROR no log `tc-pipeline` abre um alerta e envia e-mail ao canal da frente 4. Avisa de novo a cada 5 min enquanto aberto e fecha sozinho em 30 min | [`docs/evidencias/alerta/`](docs/evidencias/alerta/) |
 | Latência medida de fato | streaming: `latencia_segundos` = recebimento − produção, por evento (0,91 a 17,11 s); batch: duração de cada SQL impressa pelos scripts | seção 3.5; `bronze_tc.eventos_alunos` |
 | Volume processado | linhas e bytes de cada tabela no catálogo; bytes processados por SQL na saída dos scripts | [`docs/dados/catalogo/catalogo_dados.md`](docs/dados/catalogo/catalogo_dados.md) |
